@@ -10,7 +10,10 @@ Get the latest version from the [Releases page](https://github.com/princepeniyel
 - **Mac** (Apple Silicon and Intel, macOS 13+): download `Opening-Lab-mac.zip`, unzip it and drag **Opening Lab** to Applications.
   The app isn't notarized by Apple, so the first time: right-click the app → **Open** → **Open**
   (or System Settings → Privacy & Security → **Open Anyway**).
-- **Android** (7.0+): download `Opening-Lab-Android.apk` on your phone and open it.
+- **Android** (7.0+): scan this QR code with your phone's camera, or download `Opening-Lab-Android.apk` on your phone and open it.
+
+  <img src="brand/android-qr.png" alt="QR code: download Opening Lab for Android" width="200">
+
   Android asks you to allow installing apps from your browser or Files app the first time: tap **Settings** → allow → **Install**.
 - **Windows** (10/11, 64-bit): download `Opening-Lab-Windows.zip`, right-click → **Extract All**, then run **Opening Lab.exe**.
   If SmartScreen warns about an unknown publisher, click **More info** → **Run anyway**.
