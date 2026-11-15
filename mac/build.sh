@@ -19,7 +19,11 @@ done
 iconutil -c icns "$ICONSET" -o "$APP/Contents/Resources/AppIcon.icns"
 
 # App
-swiftc -O mac/main.swift -o "$APP/Contents/MacOS/OpeningLab" -framework Cocoa -framework WebKit
+# Universal binary (Apple Silicon + Intel), runs on macOS 13 and later
+for arch in arm64 x86_64; do
+  swiftc -O -target $arch-apple-macos13.0 mac/main.swift -o "$OUT/OpeningLab-$arch" -framework Cocoa -framework WebKit
+done
+lipo -create "$OUT/OpeningLab-arm64" "$OUT/OpeningLab-x86_64" -output "$APP/Contents/MacOS/OpeningLab"
 cp mac/index.html "$APP/Contents/Resources/index.html"
 cat > "$APP/Contents/Info.plist" <<'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
@@ -40,6 +44,9 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
 </dict></plist>
 PLIST
 codesign --force --deep -s - "$APP"
+
+# Downloadable zip
+(cd "$OUT" && ditto -c -k --sequesterRsrc --keepParent "Opening Lab.app" Opening-Lab-mac.zip)
 
 # Install
 rm -rf "/Applications/Opening Lab.app"

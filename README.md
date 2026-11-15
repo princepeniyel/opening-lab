@@ -1,8 +1,17 @@
 # Opening Lab
 
-A chess trainer in a single web page: 35 openings, 19 traps, 34 puzzles, middlegame tactics and endgame drills for White and Black.
+A chess trainer in a single web page: 35 openings with 110 lines (main lines plus variations), 19 traps, 34 puzzles, middlegame tactics and endgame drills for White and Black.
 
 **Live site:** https://princepeniyel.github.io/opening-lab/
+
+## Download the desktop app
+Get the latest version from the [Releases page](https://github.com/princepeniyel/opening-lab/releases/latest). It works offline.
+
+- **Mac** (Apple Silicon and Intel, macOS 13+): download `Opening-Lab-mac.zip`, unzip it and drag **Opening Lab** to Applications.
+  The app isn't notarized by Apple, so the first time: right-click the app → **Open** → **Open**
+  (or System Settings → Privacy & Security → **Open Anyway**).
+- **Windows** (10/11, 64-bit): download `Opening-Lab-Windows.zip`, right-click → **Extract All**, then run **Opening Lab.exe**.
+  If SmartScreen warns about an unknown publisher, click **More info** → **Run anyway**.
 
 ## Features
 - Move-by-move notes for every line, with a next-move arrow
@@ -33,3 +42,12 @@ A native macOS app wraps the same trainer and works offline. To build it and ins
 ```
 
 It needs the Xcode command line tools (`xcode-select --install`).
+
+## Windows app
+Built with Electron from your Mac or any PC:
+
+```bash
+python3 build.py && cp mac/index.html win/index.html && cd win && npm install && npm run dist
+```
+
+The zip lands in `win/dist/`.

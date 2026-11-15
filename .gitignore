@@ -1,3 +1,6 @@
 .claude/
 .DS_Store
 mac/build/
+win/node_modules/
+win/dist/
+win/index.html

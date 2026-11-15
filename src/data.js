@@ -23,7 +23,7 @@ const LINES = [
 {id:'vienna',type:'opening',side:'w',eco:'C29',family:'1.e4',name:'Vienna Gambit',
  desc:'An aggressive sideline: Nc3 then f4, like a King\'s Gambit with better preparation.',
  pgn:`e4 e5 Nc3 {Prepares f4 while keeping e4 protected.} Nf6 f4 {The Vienna Gambit.} d5 {Best: Black strikes back in the center.} fxe5 Nxe4 Nf3 {Develop and support e5.} Be7 d4 O-O Bd3 {White has space and attacking chances on the kingside.}`},
-{id:'kga',type:'opening',side:'w',eco:'C39',family:'1.e4',name:"King's Gambit Accepted",
+{id:'kga',type:'opening',side:'w',eco:'C39',family:'1.e4',name:"King's Gambit: Accepted (Kieseritzky)",
  desc:'The romantic gambit. White gives a pawn for rapid development and an open f-file.',
  pgn:`e4 e5 f4 {Offers a pawn to deflect Black's e-pawn.} exf4 Nf3 {Stops ...Qh4+ and develops.} g5 {Black tries to hold the extra pawn.} h4 {Undermine the pawn chain at once.} g4 Ne5 {The Kieseritzky Gambit: a strong central knight.} Nf6 Bc4 d5 exd5 Bd6 d4 {White has a sharp, dynamic game.}`},
 {id:'evans',type:'opening',side:'w',eco:'C52',family:'1.e4',name:'Evans Gambit',
@@ -41,7 +41,7 @@ const LINES = [
 {id:'morra',type:'opening',side:'w',eco:'B21',family:'1.e4',name:'Smith-Morra Gambit',
  desc:'A gambit against the Sicilian. White gives a pawn for open c- and d-files and fast development.',
  pgn:`e4 c5 d4 cxd4 c3 {The Morra: offer a pawn for development.} dxc3 Nxc3 Nc6 Nf3 d6 Bc4 e6 O-O Nf6 Qe2 {Prepares Rd1 against the d6 pawn.} Be7 Rd1 e5 Be3 O-O Rac1 {Every white piece is active.}`},
-{id:'friedliver',type:'opening',side:'w',eco:'C57',family:'1.e4',name:'Fried Liver Attack',
+{id:'friedliver',type:'opening',side:'w',eco:'C57',family:'1.e4',name:'Two Knights: Fried Liver Attack',
  desc:'If Black answers the Two Knights wrongly, White sacrifices a knight on f7 to drag the king out.',
  pgn:`e4 e5 Nf3 Nc6 Bc4 Nf6 Ng5 {Double attack on f7.} d5 {The main defense: block the bishop.} exd5 Nxd5 {The mistake! 5...Na5 is the main line.} Nxf7 {The Fried Liver sacrifice.} Kxf7 Qf3+ {Attack the king and the d5 knight.} Ke6 {The king must defend the knight.} Nc3 {Pile on the pinned knight.} Nb4 a3 Nxc2+ Kd1 Nxa1 Nxd5 {White has a crushing attack on the exposed king.}`},
 {id:'bishops',type:'opening',side:'w',eco:'C24',family:'1.e4',name:"Bishop's Opening",
@@ -219,3 +219,153 @@ const ENDGAME = [
 {id:'eg-square',theme:'Pawn endgames',name:'Rule of the Square',fen:'8/8/8/4k3/P7/8/8/7K b - - 0 1',goal:'capture',limit:10,desc:'Your king is inside the pawn\'s square. Head for the corner and catch the pawn.'},
 {id:'eg-lucena',theme:'Rook endgames',name:'Lucena Position',fen:'1K1k4/1P6/8/8/8/8/r7/2R5 w - - 0 1',goal:'promote',limit:20,desc:'Win by "building a bridge": Rd1+, then Rd4, so your rook can block the checks.'},
 ];
+
+// ───────────────────────── VARIATIONS ─────────────────────────
+// Extra lines shown as sub-lines under each opening (the entry in LINES is the main line).
+const VARIATIONS = {
+italian:[
+ {name:'Giuoco Pianissimo',eco:'C53',pgn:`e4 e5 Nf3 Nc6 Bc4 Bc5 c3 Nf6 d3 {The quiet modern approach: build slowly, keep the tension.} d6 O-O O-O Re1 a6 a4 {Gives the bishop a retreat on a2.} Ba7 h3 {Stops ...Bg4. Typical plans: Nbd2-f1-g3 and d4 later.}`},
+ {name:'Two Knights (4.d3)',eco:'C55',pgn:`e4 e5 Nf3 Nc6 Bc4 Nf6 {The Two Knights Defense.} d3 {Avoids sharp lines and keeps a solid center.} Be7 O-O O-O Re1 d6 c3 {Same slow plans as the Pianissimo.}`},
+ {name:'Hungarian Defense',eco:'C50',pgn:`e4 e5 Nf3 Nc6 Bc4 Be7 {A passive but solid choice.} d4 {Take the center at once.} d6 d5 {Gain space with tempo.} Nb8 Bd3 Nf6 c4 {White has a clear space advantage.}`},
+],
+ruy:[
+ {name:'Exchange Variation',eco:'C68',pgn:`e4 e5 Nf3 Nc6 Bb5 a6 Bxc6 {Give up the bishop to damage Black's pawns.} dxc6 O-O f6 d4 exd4 Nxd4 c5 Nb3 Qxd1 Rxd1 {White aims for an endgame with the better pawn majority.}`},
+ {name:'Open Variation',eco:'C80',pgn:`e4 e5 Nf3 Nc6 Bb5 a6 Ba4 Nf6 O-O Nxe4 {The Open Ruy: Black grabs e4 for active play.} d4 b5 Bb3 d5 dxe5 Be6 c3 {Black's pieces are active, White has the e5 pawn.}`},
+ {name:'Marshall Attack',eco:'C89',pgn:`e4 e5 Nf3 Nc6 Bb5 a6 Ba4 Nf6 O-O Be7 Re1 b5 Bb3 O-O c3 d5 {The Marshall Gambit: a pawn for a fierce attack.} exd5 Nxd5 Nxe5 Nxe5 Rxe5 c6 d4 Bd6 Re1 Qh4 g3 Qh3 {Black's pieces swarm toward White's king.}`},
+ {name:'Berlin Defense',eco:'C67',pgn:`e4 e5 Nf3 Nc6 Bb5 Nf6 O-O Nxe4 d4 Nd6 Bxc6 dxc6 dxe5 Nf5 Qxd8+ Kxd8 {The famous Berlin endgame.}`},
+],
+scotch:[
+ {name:'Classical (4...Bc5)',eco:'C45',pgn:`e4 e5 Nf3 Nc6 d4 exd4 Nxd4 Bc5 {Develop with pressure on d4.} Be3 Qf6 c3 Nge7 Bc4 {White holds d4 and develops naturally.}`},
+ {name:'Scotch Gambit',eco:'C44',pgn:`e4 e5 Nf3 Nc6 d4 exd4 Bc4 {Gambit style: develop first, win d4 back later.} Nf6 e5 d5 Bb5 Ne4 Nxd4 Bd7 {Sharp, open play.}`},
+ {name:'Steinitz (4...Qh4)',eco:'C45',pgn:`e4 e5 Nf3 Nc6 d4 exd4 Nxd4 Qh4 {Attacks e4 right away.} Nc3 Bb4 Be2 Qxe4 Nb5 {White gets a lot of activity for the pawn.}`},
+],
+qgd:[
+ {name:'Exchange Variation',eco:'D36',pgn:`d4 d5 c4 e6 Nc3 Nf6 cxd5 exd5 {Fixes Black's pawn structure.} Bg5 Be7 e3 c6 Bd3 Nbd7 Qc2 O-O Nge2 Re8 O-O {Plans: the minority attack with b4-b5, or f3 and e4.}`},
+ {name:'Ragozin',eco:'D38',pgn:`d4 d5 c4 e6 Nc3 Nf6 Nf3 Bb4 {Nimzo-style pin inside the Queen's Gambit.} cxd5 exd5 Bg5 h6 Bh4 c5 {Black plays actively in the center.}`},
+ {name:'Tarrasch Defense',eco:'D34',pgn:`d4 d5 c4 e6 Nc3 c5 {Black accepts an isolated pawn for free piece play.} cxd5 exd5 Nf3 Nc6 g3 {Fianchetto to pressure d5.} Nf6 Bg2 Be7 O-O O-O`},
+],
+london:[
+ {name:'vs King\'s Indian setup',eco:'A48',pgn:`d4 Nf6 Bf4 g6 e3 Bg7 Nf3 O-O Be2 d6 h3 {Keeps a retreat for the bishop on h2.} c5 c3 {The solid London triangle again.}`},
+ {name:'vs early ...c5 and ...Qb6',eco:'D02',pgn:`d4 d5 Bf4 c5 e3 Nc6 c3 Qb6 {Black hits b2 once the bishop has left c1.} Qb3 {Offer a queen trade.} c4 Qc2 Bf5 Qc1 {The queen guards b2 and e3.}`},
+],
+english:[
+ {name:'Symmetrical',eco:'A36',pgn:`c4 c5 Nc3 Nc6 g3 g6 Bg2 Bg7 {Both sides fianchetto.} Nf3 Nf6 O-O O-O d4 cxd4 Nxd4 {White opens the center with a small edge in space.}`},
+ {name:'Closed (Botvinnik setup)',eco:'A26',pgn:`c4 e5 Nc3 Nc6 g3 g6 Bg2 Bg7 e4 {The Botvinnik setup: grip on d5.} d6 Nge2 Nge7 d3 O-O O-O {Slow maneuvering; f4 or b4 are typical plans.}`},
+],
+vienna:[
+ {name:'Frankenstein-Dracula',eco:'C27',pgn:`e4 e5 Nc3 Nf6 Bc4 Nxe4 {Black grabs the pawn with a fork trick.} Qh5 Nd6 Bb3 Nc6 Nb5 g6 Qf3 f5 Qd5 Qe7 Nxc7+ Kd8 Nxa8 b6 {Crazy play: White wins a rook but the knight is trapped.}`},
+ {name:'Vienna 2...Nc6',eco:'C25',pgn:`e4 e5 Nc3 Nc6 Bc4 Nf6 d3 Na5 {Hunting the c4 bishop.} Nge2 Nxc4 dxc4 {White gets open lines for the lost bishop.}`},
+],
+kga:[
+ {name:'Falkbeer Countergambit',eco:'C31',pgn:`e4 e5 f4 d5 {Hit back in the center.} exd5 e4 d3 Nf6 dxe4 Nxe4 Nf3 Bc5 Qe2 {Pin the e4 knight. Sharp.}`},
+ {name:'Classical Declined (2...Bc5)',eco:'C30',pgn:`e4 e5 f4 Bc5 {Stops White from castling short easily.} Nf3 d6 c3 Nf6 d4 exd4 cxd4 Bb4+ Bd2 {White has a big center.}`},
+ {name:"Bishop's Gambit",eco:'C33',pgn:`e4 e5 f4 exf4 Bc4 {Develop and aim at f7.} Nf6 Nc3 c6 Bb3 d5 exd5 cxd5 d4 {White will win f4 back with Bxf4.}`},
+],
+evans:[
+ {name:'Evans Accepted 5...Bc5',eco:'C52',pgn:`e4 e5 Nf3 Nc6 Bc4 Bc5 b4 Bxb4 c3 Bc5 d4 exd4 O-O d6 cxd4 Bb6 {Lasker's defense idea: give back material, stay solid.}`},
+ {name:'Evans Declined',eco:'C51',pgn:`e4 e5 Nf3 Nc6 Bc4 Bc5 b4 Bb6 {Declined: keep the bishop.} a4 a6 Nc3 Nf6 Nd5 {White gains space on the queenside.}`},
+],
+catalan:[
+ {name:'Closed Catalan',eco:'E08',pgn:`d4 Nf6 c4 e6 g3 d5 Bg2 Be7 Nf3 O-O O-O c6 {Black keeps d5 solid.} Qc2 Nbd7 Nbd2 b6 e4 {White breaks in the center.}`},
+ {name:'Catalan with ...Bb4+',eco:'E01',pgn:`d4 Nf6 c4 e6 g3 d5 Bg2 Bb4+ {A check to disrupt White's development.} Bd2 Be7 Nf3 O-O O-O c6`},
+],
+reti:[
+ {name:'Réti Gambit Accepted',eco:'A09',pgn:`Nf3 d5 c4 dxc4 {Black takes the pawn.} e3 Nf6 Bxc4 e6 O-O c5 {A Queen's Gambit Accepted structure.}`},
+ {name:'Réti vs 2...d4',eco:'A09',pgn:`Nf3 d5 c4 d4 {Black grabs space.} e3 Nc6 exd4 Nxd4 Nxd4 Qxd4 Nc3 {White develops with tempo on the queen.}`},
+],
+danish:[
+ {name:'Danish Declined (3...d5)',eco:'C21',pgn:`e4 e5 d4 exd4 c3 d5 {The safest answer: return the pawn.} exd5 Qxd5 cxd4 Nc6 Nf3 Bg4 Be2 {An isolated pawn position.}`},
+],
+morra:[
+ {name:'Morra Declined (3...Nf6)',eco:'B21',pgn:`e4 c5 d4 cxd4 c3 Nf6 {Decline and hit e4.} e5 Nd5 cxd4 d6 Nf3 Nc6 {Similar to the Alapin Sicilian.}`},
+ {name:'Morra with ...a6 and ...Nge7',eco:'B21',pgn:`e4 c5 d4 cxd4 c3 dxc3 Nxc3 Nc6 Nf3 e6 Bc4 a6 O-O Nge7 {A safe setup: knight to g6, avoiding traps.}`},
+],
+friedliver:[
+ {name:'Main line 5...Na5',eco:'C58',pgn:`e4 e5 Nf3 Nc6 Bc4 Nf6 Ng5 d5 exd5 Na5 {The correct move: attack the bishop.} Bb5+ c6 dxc6 bxc6 Be2 h6 Nf3 e4 Ne5 {Black has a pawn less but great activity.}`},
+ {name:'Traxler Counterattack',eco:'C57',pgn:`e4 e5 Nf3 Nc6 Bc4 Nf6 Ng5 Bc5 {The Traxler: ignore f7 and counterattack.} Nxf7 Bxf2+ Kxf2 Nxe4+ Kg1 Qh4 g3 Nxg3 hxg3 Qxg3+ Kf1 Rf8 {Wild complications.}`},
+],
+bishops:[
+ {name:'Urusov Gambit',eco:'C24',pgn:`e4 e5 Bc4 Nf6 d4 {The Urusov Gambit.} exd4 Nf3 Nxe4 Qxd4 Nf6 Bg5 Be7 Nc3 {White has fast development for the pawn.}`},
+],
+jobava:[
+ {name:'vs ...g6',eco:'D00',pgn:`d4 Nf6 Nc3 d5 Bf4 g6 e3 Bg7 h4 {A direct h-pawn attack against the fianchetto.}`},
+ {name:'vs ...e6 with Nb5',eco:'D00',pgn:`d4 d5 Nc3 Nf6 Bf4 e6 Nb5 {Attacking c7 at once.} Na6 e3 Be7 {Black covers c7.}`},
+],
+najdorf:[
+ {name:'6.Bg5 Main Line',eco:'B96',pgn:`e4 c5 Nf3 d6 d4 cxd4 Nxd4 Nf6 Nc3 a6 Bg5 {The classical attack.} e6 f4 Be7 Qf3 Qc7 O-O-O Nbd7 {Opposite-side castling and a sharp fight.}`},
+ {name:'6.Be2 Classical',eco:'B92',pgn:`e4 c5 Nf3 d6 d4 cxd4 Nxd4 Nf6 Nc3 a6 Be2 e5 {Grab space with tempo.} Nb3 Be7 O-O O-O Be3 Be6 {A positional battle for d5.}`},
+ {name:'6.Bc4 Sozin (Fischer)',eco:'B87',pgn:`e4 c5 Nf3 d6 d4 cxd4 Nxd4 Nf6 Nc3 a6 Bc4 {The bishop aims at e6 and f7.} e6 Bb3 b5 O-O Be7 Qf3 Qc7 {Black blunts the bishop and plays on the queenside.}`},
+],
+dragon:[
+ {name:'Classical 6.Be2',eco:'B73',pgn:`e4 c5 Nf3 d6 d4 cxd4 Nxd4 Nf6 Nc3 g6 Be2 Bg7 O-O O-O Nb3 Nc6 Be3 Be6 f4 Na5 {Black eyes c4.}`},
+ {name:'Yugoslav 9.O-O-O',eco:'B77',pgn:`e4 c5 Nf3 d6 d4 cxd4 Nxd4 Nf6 Nc3 g6 Be3 Bg7 f3 O-O Qd2 Nc6 O-O-O d5 {The central strike against opposite castling.} exd5 Nxd5 Nxc6 bxc6 Bd4 {A sharp line with chances for both.}`},
+],
+sveshnikov:[
+ {name:'9.Nd5 Main Line',eco:'B33',pgn:`e4 c5 Nf3 Nc6 d4 cxd4 Nxd4 Nf6 Nc3 e5 Ndb5 d6 Bg5 a6 Na3 b5 Nd5 Be7 Bxf6 Bxf6 c3 O-O Nc2 Bg5 {Black's dark bishop is a strong piece.}`},
+ {name:'7.Nd5',eco:'B33',pgn:`e4 c5 Nf3 Nc6 d4 cxd4 Nxd4 Nf6 Nc3 e5 Ndb5 d6 Nd5 Nxd5 exd5 Nb8 {The knight reroutes to d7.} c4 Be7`},
+],
+'french-adv':[
+ {name:'Exchange Variation',eco:'C01',pgn:`e4 e6 d4 d5 exd5 exd5 {A symmetrical structure.} Nf3 Nf6 Bd3 Bd6 O-O O-O {Balanced; play for active pieces.}`},
+ {name:'Tarrasch 3.Nd2',eco:'C07',pgn:`e4 e6 d4 d5 Nd2 c5 {Hit the center right away.} exd5 Qxd5 Ngf3 cxd4 Bc4 Qd6 O-O Nf6 {Black has an easy game.}`},
+ {name:'Classical 3...Nf6',eco:'C14',pgn:`e4 e6 d4 d5 Nc3 Nf6 Bg5 Be7 e5 Nfd7 Bxe7 Qxe7 f4 O-O {Black plays ...c5 and ...f6 next.}`},
+],
+winawer:[
+ {name:'Winawer 7.Nf3',eco:'C18',pgn:`e4 e6 d4 d5 Nc3 Bb4 e5 c5 a3 Bxc3+ bxc3 Ne7 Nf3 {The positional line.} Qa5 Bd2 Nbc6 {Pressure on c3 and d4.}`},
+ {name:'Winawer 4...Ne7',eco:'C17',pgn:`e4 e6 d4 d5 Nc3 Bb4 e5 Ne7 a3 Bxc3+ bxc3 c5 Qg4 Ng6 {The knight defends g7.}`},
+],
+'caro-classical':[
+ {name:'Karpov (4...Nd7)',eco:'B17',pgn:`e4 c6 d4 d5 Nc3 dxe4 Nxe4 Nd7 {Prepares ...Ngf6 without doubled pawns.} Nf3 Ngf6 Nxf6+ Nxf6 Bc4 Bf5 Qe2 e6 Bg5 Be7`},
+ {name:'Exchange Variation',eco:'B13',pgn:`e4 c6 d4 d5 exd5 cxd5 Bd3 Nc6 c3 Nf6 Bf4 Bg4 Qb3 Qd7 Nd2 e6 {A Queen's Gambit with colors reversed.}`},
+ {name:'Panov Attack',eco:'B14',pgn:`e4 c6 d4 d5 exd5 cxd5 c4 {The Panov: play with an isolated pawn.} Nf6 Nc3 e6 Nf3 Be7 cxd5 Nxd5 {Black blockades d5.}`},
+],
+'caro-adv':[
+ {name:'4.Nc3 e6 5.g4',eco:'B12',pgn:`e4 c6 d4 d5 e5 Bf5 Nc3 e6 g4 {Chase the bishop.} Bg6 Nge2 c5 h4 h5 Nf4 Bh7 Nxh5 {Very sharp.}`},
+ {name:'3...c5',eco:'B12',pgn:`e4 c6 d4 d5 e5 c5 {A French-style strike.} dxc5 e6 Be3 Nd7 Bb5 a6 Bxd7+ Bxd7 {Black wins c5 back.}`},
+],
+kid:[
+ {name:'Sämisch',eco:'E81',pgn:`d4 Nf6 c4 g6 Nc3 Bg7 e4 d6 f3 {Solid center; often White castles long and attacks.} O-O Be3 e5 d5 Nh5 Qd2 f5`},
+ {name:'Four Pawns Attack',eco:'E77',pgn:`d4 Nf6 c4 g6 Nc3 Bg7 e4 d6 f4 {Maximum center.} O-O Nf3 c5 d5 e6 Be2 exd5 cxd5 {A Benoni structure.}`},
+ {name:'Fianchetto',eco:'E67',pgn:`d4 Nf6 c4 g6 Nf3 Bg7 g3 O-O Bg2 d6 O-O Nbd7 Nc3 e5 e4 {Classical tension in the center.}`},
+],
+nimzo:[
+ {name:'Classical 4.Qc2',eco:'E34',pgn:`d4 Nf6 c4 e6 Nc3 Bb4 Qc2 {Avoids doubled pawns.} O-O a3 Bxc3+ Qxc3 b6 Bg5 Bb7 {Black fights for the light squares.}`},
+ {name:'Sämisch 4.a3',eco:'E25',pgn:`d4 Nf6 c4 e6 Nc3 Bb4 a3 Bxc3+ bxc3 {Bishop pair for doubled pawns.} c5 f3 d5 cxd5 Nxd5 {Black targets c3.}`},
+ {name:'Rubinstein 4.e3 b6',eco:'E44',pgn:`d4 Nf6 c4 e6 Nc3 Bb4 e3 b6 Ne2 {Recapture on c3 with a knight. (The c3 knight is pinned.)} Bb7 a3 Be7 d5`},
+],
+slav:[
+ {name:'Exchange Slav',eco:'D10',pgn:`d4 d5 c4 c6 cxd5 cxd5 {Symmetrical and solid.} Nc3 Nf6 Bf4 Nc6 e3 Bf5 Nf3 e6`},
+ {name:'Semi-Slav Meran',eco:'D47',pgn:`d4 d5 c4 c6 Nf3 Nf6 Nc3 e6 e3 Nbd7 Bd3 dxc4 Bxc4 b5 {Gain space with tempo.} Bd3 Bb7 {Black plans ...a6 and ...c5.}`},
+],
+qga:[
+ {name:'3.e4 Central Variation',eco:'D20',pgn:`d4 d5 c4 dxc4 e4 {Take the whole center.} e5 {Strike back at once.} Nf3 exd4 Bxc4 Bb4+ Nbd2 Nc6 O-O`},
+],
+grunfeld:[
+ {name:'Russian System',eco:'D97',pgn:`d4 Nf6 c4 g6 Nc3 d5 Nf3 Bg7 Qb3 {Pressure on d5.} dxc4 Qxc4 O-O e4 Bg4 Be3 Nfd7 {Black hits the center with pieces.}`},
+ {name:'5.Bf4',eco:'D82',pgn:`d4 Nf6 c4 g6 Nc3 d5 Bf4 Bg7 e3 c5 dxc5 Qa5 Rc1 dxc4 Bxc4 O-O`},
+],
+scandi:[
+ {name:'Modern (2...Nf6)',eco:'B01',pgn:`e4 d5 exd5 Nf6 {Recapture with the knight later.} d4 Nxd5 Nf3 g6 c4 Nb6 Nc3 Bg7`},
+ {name:'3...Qd6',eco:'B01',pgn:`e4 d5 exd5 Qxd5 Nc3 Qd6 {The modern queen retreat.} d4 Nf6 Nf3 a6 Be2 Nc6`},
+],
+pirc:[
+ {name:'Austrian Attack',eco:'B09',pgn:`e4 d6 d4 Nf6 Nc3 g6 f4 {The most aggressive answer.} Bg7 Nf3 O-O Bd3 Na6 O-O c5 d5`},
+ {name:'150 Attack',eco:'B07',pgn:`e4 d6 d4 Nf6 Nc3 g6 Be3 c6 Qd2 {Plans Bh6 and h4.} b5 f3 Nbd7`},
+],
+dutch:[
+ {name:'Stonewall',eco:'A90',pgn:`d4 f5 g3 Nf6 Bg2 e6 Nf3 d5 {The Stonewall: pawns on c6, d5, e6, f5.} O-O Bd6 c4 c6 b3 Qe7`},
+ {name:'Classical',eco:'A96',pgn:`d4 f5 c4 Nf6 g3 e6 Bg2 Be7 Nf3 O-O O-O d6 Nc3 Qe8 {The queen swings to h5.}`},
+],
+petrov:[
+ {name:'3.d4',eco:'C43',pgn:`e4 e5 Nf3 Nf6 d4 {Open the center.} Nxe4 Bd3 d5 Nxe5 Nd7 Nxd7 Bxd7 O-O`},
+ {name:'5.Nc3',eco:'C42',pgn:`e4 e5 Nf3 Nf6 Nxe5 d6 Nf3 Nxe4 Nc3 Nxc3 dxc3 {White castles long and attacks.} Be7 Be3 O-O Qd2 Nd7`},
+],
+berlin:[
+ {name:'Anti-Berlin 4.d3',eco:'C65',pgn:`e4 e5 Nf3 Nc6 Bb5 Nf6 d3 {Avoids the Berlin endgame.} Bc5 c3 O-O O-O d6 h3 a6 Ba4`},
+],
+benko:[
+ {name:'Benko Declined 4.Nf3',eco:'A57',pgn:`d4 Nf6 c4 c5 d5 b5 Nf3 {Decline the pawn.} bxc4 Nc3 g6 e4 d6 Bxc4 Bg7`},
+],
+'caro-tal':[
+ {name:'3...dxe4',eco:'B11',pgn:`e4 c6 Nc3 d5 Nf3 dxe4 Nxe4 Bf5 Ng3 Bg6 h4 h6 h5 Bh7 d4 Nd7 {A Classical Caro-Kann structure.}`},
+],
+};

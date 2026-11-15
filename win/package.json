@@ -1,0 +1,43 @@
+{
+  "name": "opening-lab",
+  "productName": "Opening Lab",
+  "version": "1.0.0",
+  "description": "Chess opening, trap, puzzle and endgame trainer",
+  "author": "princepeniyel",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "dist": "electron-builder --win --x64"
+  },
+  "devDependencies": {
+    "electron": "33.2.1",
+    "electron-builder": "25.1.8",
+    "resedit": "^1.7.2"
+  },
+  "build": {
+    "appId": "io.github.princepeniyel.openinglab",
+    "productName": "Opening Lab",
+    "files": [
+      "main.js",
+      "index.html",
+      "icon.png"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "zip",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "signAndEditExecutable": false,
+      "icon": "icon-256.png",
+      "artifactName": "Opening-Lab-Windows.zip"
+    },
+    "afterPack": "./afterPack.js"
+  }
+}

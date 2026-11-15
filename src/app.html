@@ -35,6 +35,8 @@ button:focus-visible,input:focus-visible,.item:focus-visible{outline:2px solid v
 .toggle{display:flex;align-items:center;gap:8px;color:var(--fg3);font-size:12px;font-weight:600}
 .toggle input{accent-color:var(--green)}
 .prog{font-size:12px;color:var(--fg3)}
+.dl{display:block;text-align:center;font-size:12px;font-weight:700;color:var(--fg);background:#3c3a37;border-radius:5px;padding:8px;text-decoration:none}
+.dl:hover{background:#4a4744}
 .bar{height:6px;background:#3d3a36;border-radius:3px;overflow:hidden;margin-top:6px}
 .bar i{display:block;height:100%;background:var(--green);width:0;transition:width .3s}
 
@@ -106,6 +108,19 @@ button:focus-visible,input:focus-visible,.item:focus-visible{outline:2px solid v
 .item .ok svg{width:12px;height:12px}
 .item .ok.no{background:none;border:2px solid #4a4744}
 .empty{padding:30px 16px;color:var(--fg3);text-align:center}
+.famhead .chev{width:18px;height:18px;flex:none;color:var(--fg3);transition:transform .2s}
+.fam.open .famhead .chev{transform:rotate(90deg)}
+.fam .subs{display:none}
+.fam.open .subs{display:block;background:#22211e;border-bottom:1px solid var(--line)}
+.item.sub{padding:8px 14px 8px 22px;gap:10px}
+.item.sub .nm{font-size:13px}
+.tree{width:22px;height:22px;flex:none;border-left:2px solid #4a4744;border-bottom:2px solid #4a4744;border-bottom-left-radius:7px;margin:-14px 0 0 10px}
+.maintag{font-size:10px;font-weight:800;background:#33402a;color:#c5e3a4;border-radius:3px;padding:1px 5px;margin-left:6px;vertical-align:1px}
+.vars{display:flex;flex-wrap:wrap;gap:6px}
+.vars button{font-size:12px;font-weight:700;padding:5px 10px;border-radius:14px;background:var(--panel2);color:var(--fg2);border:1px solid var(--line)}
+.vars button:hover{color:var(--fg);border-color:#5b5855}
+.vars button.on{background:#3f4a35;color:var(--fg);border-color:#5d7a3f}
+.vars .ck{color:var(--green);margin-left:5px}
 
 /* Line view */
 .lhead{padding:14px 14px 10px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
@@ -204,6 +219,7 @@ button:focus-visible,input:focus-visible,.item:focus-visible{outline:2px solid v
       Random Drill</button>
     <div class="side-foot">
       <div class="prog"><span id="prog-txt">0 of 0 mastered</span><div class="bar"><i id="prog-bar"></i></div></div>
+      <a class="dl" href="https://github.com/princepeniyel/opening-lab/releases/latest" target="_blank" rel="noopener">Download for Mac &amp; Windows</a>
       <label class="toggle"><input type="checkbox" id="opt-sound" checked> Move sounds</label>
       <label class="toggle"><input type="checkbox" id="opt-arrow" checked> Show next-move arrow</label>
       <label class="toggle"><input type="checkbox" id="opt-legal" checked> Show legal moves</label>
@@ -247,6 +263,7 @@ button:focus-visible,input:focus-visible,.item:focus-visible{outline:2px solid v
           <div class="meta" id="l-meta"></div>
           <h2 id="l-name"></h2>
           <p class="desc" id="l-desc"></p>
+          <div class="vars" id="l-vars" role="group" aria-label="Lines in this opening"></div>
           <div class="modes" id="l-modes">
             <button data-mode="study" class="on" id="m-study">Study the line</button>
             <button data-mode="practice" id="m-practice">Practice it</button>
@@ -296,7 +313,12 @@ const BCOL={book:'var(--book)',good:'var(--good)',bad:'var(--bad)',mate:'#e6912c
 
 // ---------- data ----------
 function parsePgn(p){const out=[];const re=/\{([^}]*)\}|(\S+)/g;let m;while((m=re.exec(p))){if(m[1]!==undefined){if(out.length)out[out.length-1].c=m[1].trim();}else out.push({san:m[2]});}return out;}
-LINES.forEach(L=>{const pm=parsePgn(L.pgn);L.book=pm.map(x=>x.san);L.notes=pm.map(x=>x.c||'');
+LINES.filter(L=>L.type==='opening').forEach(P=>{const ci=P.name.indexOf(':');P.base=ci>0?P.name.slice(0,ci):P.name;P.varName=ci>0?P.name.slice(ci+1).trim():'Main line';P.kids=[];
+  (VARIATIONS[P.id]||[]).forEach((v,k)=>{const C={id:P.id+'-v'+(k+1),type:'opening',side:P.side,eco:v.eco||P.eco,family:P.family,parent:P.id,base:P.base,varName:v.name,
+    name:P.base+': '+v.name,desc:v.desc||('A key line of the '+P.base+'. The notes on each move explain the plans.'),pgn:v.pgn};P.kids.push(C.id);LINES.push(C);});});
+{const cnt={};LINES.filter(L=>L.type==='opening'&&!L.parent).forEach(L=>cnt[L.base]=(cnt[L.base]||0)+1);
+  LINES.filter(L=>L.type==='opening'&&!L.parent&&cnt[L.base]>1).forEach(P=>{P.head=P.name;});}
+LINES.forEach(L=>{if(!L.pgn)return;const pm=parsePgn(L.pgn);L.book=pm.map(x=>x.san);L.notes=pm.map(x=>x.c||'');
   let s='';L.book.slice(0,8).forEach((m,i)=>{s+=(i%2?'':((i/2+1)+'.'))+m+' ';});L.preview=s.trim()+(L.book.length>8?' …':'');});
 const SHORT={'Mate in 1':'M1','Mate in 2':'M2','Opening trap':'Trap'};
 const countPiece=(fen,ch)=>fen.split(' ')[0].split('').filter(c=>c===ch).length;
@@ -473,12 +495,23 @@ function renderControls(){
 function renderDone(){const el=$('done-box');el.innerHTML='';}
 
 // ---------- library ----------
+const EXP={};
+const CHEV='<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
+function matchQ(L,q){return !q||(L.name+' '+L.eco+' '+L.family+' '+L.book.join(' ')).toLowerCase().includes(q);}
+function pieceIcon(L){return '<span class="ic '+L.side+'"><img alt="" src="'+PIECES[L.side+({trap:'n',puzzle:'q',middlegame:'b',endgame:'r'}[L.type]||'k')]+'"></span>';}
+function okDot(id){const d=mastered[id];return '<span class="ok'+(d?'':' no')+'" title="'+(d?'Mastered':'Not mastered yet')+'">'+(d?ICON.check:'')+'</span>';}
+function rowHtml(L,sub){return '<button class="item'+(sub?' sub':'')+(S.line&&S.line.id===L.id?' cur':'')+'" data-id="'+L.id+'">'+(sub?'<span class="tree"></span>':pieceIcon(L))+
+  '<span class="tx"><div class="nm">'+(sub?L.varName+(L.parent?'':'<span class="maintag">Main line</span>'):L.name)+'</div><div class="pv">'+L.preview+'</div></span><span class="eco">'+L.eco+'</span>'+okDot(L.id)+'</button>';}
 function renderList(){const q=S.q.trim().toLowerCase();
-  let items=LINES.filter(L=>L.type===S.cat&&(S.side==='all'||L.side===S.side)&&(!q||(L.name+' '+L.eco+' '+L.family+' '+L.book.join(' ')).toLowerCase().includes(q)));
+  const items=LINES.filter(L=>L.type===S.cat&&!L.parent&&(S.side==='all'||L.side===S.side)&&(matchQ(L,q)||(L.kids||[]).some(id=>matchQ(byId[id],q))));
   const groups={};items.forEach(L=>{const k=(L.side==='w'?'White':'Black')+' · '+L.family;(groups[k]=groups[k]||[]).push(L);});
-  const el=$('list');if(!items.length){el.innerHTML='<div class="empty">No lines match “'+S.q.replace(/</g,'&lt;')+'”.</div>';return;}
+  const el=$('list');if(!items.length){el.innerHTML='<div class="empty">Nothing matches “'+S.q.replace(/</g,'&lt;')+'”.</div>';return;}
   let h='';Object.keys(groups).sort((a,b)=>a.localeCompare(b)).forEach(k=>{h+='<div class="grp">'+k+'</div>';groups[k].forEach(L=>{
-    h+='<button class="item'+(S.line&&S.line.id===L.id?' cur':'')+'" data-id="'+L.id+'"><span class="ic '+L.side+'"><img alt="" src="'+PIECES[L.side+({trap:'n',puzzle:'q',middlegame:'b',endgame:'r'}[L.type]||'k')]+'"></span><span class="tx"><div class="nm">'+L.name+'</div><div class="pv">'+L.preview+'</div></span><span class="eco">'+L.eco+'</span><span class="ok'+(mastered[L.id]?'':' no')+'" title="'+(mastered[L.id]?'Mastered':'Not mastered yet')+'">'+(mastered[L.id]?ICON.check:'')+'</span></button>';});});
+    if(!(L.kids&&L.kids.length)){h+=rowHtml(L,false);return;}
+    const fam=[L.id].concat(L.kids);const open=EXP[L.id]!==undefined?EXP[L.id]:(!!q&&L.kids.some(id=>matchQ(byId[id],q)))||(S.line&&fam.includes(S.line.id));
+    const nDone=fam.filter(id=>mastered[id]).length;
+    h+='<div class="fam'+(open?' open':'')+'"><button class="item famhead" data-exp="'+L.id+'" aria-expanded="'+open+'">'+pieceIcon(L)+'<span class="tx"><div class="nm">'+(L.head||L.base)+'</div><div class="pv">'+fam.length+' lines · '+nDone+' mastered</div></span><span class="eco">'+L.eco+'</span>'+CHEV+'</button>';
+    h+='<div class="subs">'+fam.filter(id=>matchQ(byId[id],q)||matchQ(L,q)).map(id=>rowHtml(byId[id],true)).join('')+'</div></div>';});});
   el.innerHTML=h;}
 function renderProgress(){const n=LINES.filter(L=>mastered[L.id]).length;$('prog-txt').textContent=n+' of '+LINES.length+' mastered';$('prog-bar').style.width=(n/LINES.length*100)+'%';
   ['opening','trap','puzzle','middlegame','endgame'].forEach(t=>{const all=LINES.filter(L=>L.type===t);$('cnt-'+t).textContent=all.filter(L=>mastered[L.id]).length+'/'+all.length;});}
@@ -492,6 +525,8 @@ function openLine(id,mode){const L=byId[id];if(!L)return;S.line=L;S.moves=L.book
   document.querySelectorAll('.nav[data-nav]').forEach(n=>n.classList.toggle('on',n.dataset.nav===L.type));
   const lbl=PUZZLY(L.type)?['Show solution','Solve it']:['Study the line','Practice it'];$('m-study').textContent=lbl[0];$('m-practice').textContent=lbl[1];
   $('l-modes').hidden=L.type==='endgame';
+  const P=L.parent?byId[L.parent]:L;const fam=P.kids&&P.kids.length?[P.id].concat(P.kids):[];$('l-vars').hidden=!fam.length;
+  $('l-vars').innerHTML=fam.map(id=>{const V=byId[id];return '<button data-var="'+id+'" class="'+(id===L.id?'on':'')+'">'+V.varName+(mastered[id]?'<span class="ck">✓</span>':'')+'</button>';}).join('');
   buildSquares();setMode(mode||(L.type==='opening'||L.type==='trap'?'study':'practice'));setTab('line');renderList();}
 function setMeta(){const L=S.line;const TL={opening:'Opening',trap:'Trap',puzzle:'Puzzle',middlegame:'Middlegame',endgame:'Endgame'};const sn=L.side==='w'?'White':'Black';
   $('l-meta').innerHTML='<span class="chip '+(L.type==='trap'?'trap':'op')+'">'+TL[L.type]+'</span><span class="chip">'+(L.theme||L.eco)+'</span><span class="chip">'+(L.type==='opening'||L.type==='trap'?'Play as '+sn:sn+' to move')+'</span><span class="chip">'+(L.type==='endgame'?GOALTXT[L.goal]+' · '+L.limit+' moves':Math.ceil(L.book.length/2)+' moves')+'</span>'+(mastered[L.id]?'<span class="chip op">✓ Mastered</span>':'');}
@@ -610,7 +645,9 @@ document.querySelectorAll('.nav[data-nav]').forEach(n=>n.onclick=()=>{const v=n.
   S.cat=v;document.querySelectorAll('.nav[data-nav]').forEach(x=>x.classList.toggle('on',x===n));setTab('lib');renderList();});
 $('f-side').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.side=b.dataset.side;$('f-side').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));renderList();});
 $('f-q').addEventListener('input',e=>{S.q=e.target.value;renderList();});
-$('list').addEventListener('click',e=>{const it=e.target.closest('.item');if(it)openLine(it.dataset.id);});
+$('list').addEventListener('click',e=>{const fh=e.target.closest('[data-exp]');if(fh){const id=fh.dataset.exp;const fam=fh.parentNode;EXP[id]=!fam.classList.contains('open');renderList();return;}
+  const it=e.target.closest('.item');if(it)openLine(it.dataset.id);});
+$('l-vars').addEventListener('click',e=>{const b=e.target.closest('[data-var]');if(b&&b.dataset.var!==S.line.id)openLine(b.dataset.var,S.mode==='practice'?'practice':undefined);});
 $('moves').addEventListener('click',e=>{const m=e.target.closest('.m');if(m&&S.mode==='study')go(+m.dataset.ply,false);});
 [['opt-sound','sound'],['opt-arrow','arrow'],['opt-legal','legal']].forEach(([id,k])=>{const el=$(id);el.checked=opts[k];el.onchange=()=>{opts[k]=el.checked;store.set(k,el.checked);render();};});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&drag){cancelDrag();return;}if(e.target.tagName==='INPUT')return;
