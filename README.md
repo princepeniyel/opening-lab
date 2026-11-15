@@ -21,3 +21,12 @@ python3 build.py
 
 ## Credits
 Pieces: Colin M.L. Burnett (cburnett), CC BY-SA 3.0. Move logic: chess.js.
+
+## Mac app
+A native macOS app wraps the same trainer and works offline. To build it and install it into `/Applications`:
+
+```bash
+./mac/build.sh
+```
+
+It needs the Xcode command line tools (`xcode-select --install`).
