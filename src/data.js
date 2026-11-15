@@ -171,3 +171,51 @@ const LINES = [
  desc:'In the Budapest Gambit, the white king gets mated on its own home square.',
  pgn:`d4 Nf6 c4 e5 {The Budapest Gambit.} dxe5 Ng4 Bf4 Nc6 Nf3 Bb4+ Nbd2 Qe7 a3 Ngxe5 {Bait: the bishop is hanging.} axb4 {Greed.} Nd3# {A smothered mate! e2 is pinned.}`},
 ];
+
+// ───────────────────────── PUZZLES ─────────────────────────
+// Hand-made mate puzzles. Each was checked with a solver: the solution is the only way to mate
+// (puzzles with two mating moves accept either one).
+const PUZZLES = [
+{id:'m-backrank',theme:'Mate in 1',name:'Back-Rank Mate',fen:'6k1/5ppp/8/8/8/8/5PPP/3R2K1 w - - 0 1',desc:'The king has no air. Find the mate.',pgn:`Rd8# {The king is trapped behind its own pawns. Always give your king a flight square!}`},
+{id:'m-smothered',theme:'Mate in 1',name:'Smothered Mate',fen:'6rk/6pp/8/6N1/8/8/8/6K1 w - - 0 1',desc:'The king is boxed in by its own pieces.',pgn:`Nf7# {Only a knight can check a king that is surrounded by its own army.}`},
+{id:'m-anastasia',theme:'Mate in 1',name:"Anastasia's Mate",fen:'5r2/4Nppk/8/8/8/3R4/8/6K1 w - - 0 1',desc:'Knight and rook against a king on the edge.',pgn:`Rh3# {The e7 knight covers g6 and g8, the rook takes the h-file.}`},
+{id:'m-arabian',theme:'Mate in 1',name:'Arabian Mate',fen:'7k/R7/5N2/8/8/8/8/6K1 w - - 0 1',desc:'One of the oldest checkmate patterns.',pgn:`Rh7# {The knight protects the rook and covers g8.}`},
+{id:'m-qb',theme:'Mate in 1',name:'Queen and Bishop Mate',fen:'6k1/5p1p/6pB/8/8/8/1Q4PP/6K1 w - - 0 1',desc:'The dark squares around the king are weak.',pgn:`Qg7# {The h6 bishop protects the queen. (Qb8# also works.)}`},
+{id:'m-damiano',theme:'Mate in 1',name:"Damiano's Mate",fen:'5rk1/5pp1/6P1/8/8/8/8/6KQ w - - 0 1',desc:'A pawn on g6 is a monster.',pgn:`Qh7# {The g6 pawn protects the queen on h7.}`},
+{id:'m-bodens',theme:'Mate in 1',name:"Boden's Mate",fen:'2kr4/p2n4/8/8/5B2/8/4B3/6K1 w - - 0 1',desc:'Two bishops against a queenside-castled king.',pgn:`Ba6# {Two criss-crossing bishops cover every escape square.}`},
+{id:'m-queenk',theme:'Mate in 1',name:'Queen and King Mate',fen:'7k/8/6K1/8/8/8/8/5Q2 w - - 0 1',desc:'The basic endgame mate. Use your king!',pgn:`Qf8# {The king on g6 guards g7 and h7.}`},
+{id:'m-rooks',theme:'Mate in 1',name:'Rook and King Mate',fen:'6k1/8/6K1/8/8/8/R7/1R6 w - - 0 1',desc:'Finish the endgame cleanly.',pgn:`Ra8# {The king covers the 7th rank; the rook takes the 8th. (Rb8# also works.)}`},
+{id:'m-capture',theme:'Mate in 1',name:'Capture With Mate',fen:'3r2k1/5ppp/8/8/8/8/5PPP/3QR1K1 w - - 0 1',desc:'The back rank is weak. Which capture ends the game?',pgn:`Qxd8# {Take the only defender of the back rank with checkmate.}`},
+{id:'m2-philidor',theme:'Mate in 2',name:"Philidor's Legacy",fen:'r6k/6pp/7N/8/8/1Q6/6PP/6K1 w - - 0 1',desc:'Sacrifice the queen to smother the king.',pgn:`Qg8+ {The queen sacrifice! The knight covers g8, so only the rook can take.} Rxg8 Nf7# {Smothered mate.}`},
+{id:'mb-backrank',theme:'Mate in 1',name:'Back-Rank Mate (Black)',fen:'1r4k1/5ppp/8/8/8/8/5PPP/6K1 b - - 0 1',desc:'White forgot to make luft.',pgn:`Rb1# {White's own pawns trap the king.}`},
+{id:'mb-smother',theme:'Mate in 1',name:'Corner Smothered Mate',fen:'6k1/8/8/8/4n3/8/6PP/6RK b - - 0 1',desc:'The white king is stuck in the corner.',pgn:`Nf2# {Rook and pawns block every escape.}`},
+{id:'mb-queen',theme:'Mate in 1',name:'Queen Back-Rank Mate',fen:'4q1k1/5ppp/8/8/8/8/5PPP/6K1 b - - 0 1',desc:'An open e-file and a weak back rank.',pgn:`Qe1# {The queen sweeps down the open file.}`},
+{id:'mb2-philidor',theme:'Mate in 2',name:"Philidor's Legacy (Black)",fen:'6k1/6pp/1q6/8/8/7n/6PP/R6K b - - 0 1',desc:'Give the queen to smother the king.',pgn:`Qg1+ {The knight covers g1, so only the rook can take.} Rxg1 Nf2# {Smothered mate.}`},
+];
+
+// Opening traps as puzzles: start from the position just before the winning idea (number = moves played already).
+const TRAP_PUZZLES = {scholar:6,legal:10,'smothered-ck':10,damiano:6,'qga-trap':10,'petrov-trap':8,monticelli:18,tennison:10,
+  fools:3,blackburne:7,englund:11,elephant:11,lasker:11,stafford:11,fishing:13,'noahs-ark':15,mortimer:11,siberian:17,kieninger:15};
+
+// ───────────────────────── MIDDLEGAME DRILLS ─────────────────────────
+// Tactics checked with a search: the solution wins clearly more than any other move.
+const MIDDLEGAME = [
+{id:'mg-fork-c7',theme:'Knight fork',name:'Knight Fork on c7',fen:'r3k2r/ppp2ppp/8/3N4/8/8/PPP2PPP/4K2R w K - 0 1',desc:'The c7 square is a classic fork target.',pgn:`Nxc7+ {Check, and the a8 rook is attacked too.} Kd7 Nxa8 {White wins the exchange plus a pawn.}`},
+{id:'mg-royal-fork',theme:'Knight fork',name:'Royal Fork',fen:'3q3k/6pp/8/6N1/8/8/6PP/6K1 w - - 0 1',desc:'Look for a knight check that also hits the queen.',pgn:`Nf7+ {King and queen are both attacked.} Kg8 Nxd8 {White wins the queen.}`},
+{id:'mg-skewer',theme:'Skewer',name:'Bishop Skewer',fen:'8/1q6/8/8/4k3/8/4B1K1/8 w - - 0 1',desc:'King and queen on the same diagonal.',pgn:`Bf3+ {The bishop is protected by the king. The king must move...} Kd3 Bxb7 {...and the queen behind it falls.}`},
+{id:'mg-discovered',theme:'Discovered attack',name:'Discovered Attack',fen:'3q3k/8/8/8/8/8/3B4/3RK3 w - - 0 1',desc:'Move the bishop with check and let the rook do the work.',pgn:`Bc3+ {Check from the bishop, and the d1 rook now attacks d8.} Kg8 Rxd8+ {White wins the queen.}`},
+{id:'mg-queen-fork',theme:'Queen fork',name:'Queen Fork',fen:'r5k1/6pp/8/8/8/8/5PPP/3Q2K1 w - - 0 1',desc:'One queen move attacks two things.',pgn:`Qd5+ {Check on the diagonal and an attack on a8.} Kf8 Qxa8+ {White wins the rook.}`},
+{id:'mg-pawn-fork',theme:'Pawn fork',name:'Pawn Fork',fen:'8/2k5/8/2n1b3/8/3PK3/8/8 w - - 0 1',desc:'Even a pawn can attack two pieces.',pgn:`d4 {The protected pawn forks knight and bishop.} Bd6 dxc5 Bxc5+ {White wins a piece for a pawn.}`},
+];
+
+// ───────────────────────── ENDGAME DRILLS ─────────────────────────
+// Play these out against the computer. goal: mate | promote | capture (stop the pawn). limit = your moves.
+const ENDGAME = [
+{id:'eg-kqk',theme:'Basic mates',name:'Queen Checkmate',fen:'8/8/8/4k3/8/8/8/4K2Q w - - 0 1',goal:'mate',limit:20,desc:'Use the queen to push the king to the edge, then bring your own king to help. Watch out for stalemate.'},
+{id:'eg-krk',theme:'Basic mates',name:'Rook Checkmate',fen:'8/8/8/4k3/8/8/8/R3K3 w - - 0 1',goal:'mate',limit:30,desc:'Shrink the king\'s box with the rook and use your king for support. Mate happens on the edge.'},
+{id:'eg-krrk',theme:'Basic mates',name:'Two-Rook Ladder',fen:'8/8/8/3k4/8/8/8/R3K2R w KQ - 0 1',goal:'mate',limit:12,desc:'The rooks take turns checking and cutting off ranks, like climbing a ladder.'},
+{id:'eg-kqk-b',theme:'Basic mates',name:'Queen Checkmate (Black)',fen:'4k2q/8/8/8/3K4/8/8/8 b - - 0 1',goal:'mate',limit:20,desc:'The same technique with Black: box the king in, bring your king, avoid stalemate.'},
+{id:'eg-kpk',theme:'Pawn endgames',name:'King and Pawn: Opposition',fen:'4k3/8/4K3/4P3/8/8/8/8 w - - 0 1',goal:'promote',limit:15,desc:'Your king on the 6th rank in front of the pawn wins. Use the opposition and get a queen.'},
+{id:'eg-square',theme:'Pawn endgames',name:'Rule of the Square',fen:'8/8/8/4k3/P7/8/8/7K b - - 0 1',goal:'capture',limit:10,desc:'Your king is inside the pawn\'s square. Head for the corner and catch the pawn.'},
+{id:'eg-lucena',theme:'Rook endgames',name:'Lucena Position',fen:'1K1k4/1P6/8/8/8/8/r7/2R5 w - - 0 1',goal:'promote',limit:20,desc:'Win by "building a bridge": Rd1+, then Rd4, so your rook can block the checks.'},
+];
