@@ -167,6 +167,8 @@ button:focus-visible,input:focus-visible,.item:focus-visible{outline:2px solid v
 .mrow .m:hover{background:#45423e}
 .mrow .m.cur{background:#4b4847;color:var(--fg);border-bottom:2px solid #6b6866}
 .mrow .m.off{font-style:italic;color:#d7a24a}
+.mrow .m.eng{color:#8fb6dc}
+.mrow .m.eng.cur{color:#b9d4ee}
 .mrow .m.hid{color:transparent;cursor:default;pointer-events:none}
 .mrow .m.hid::after{content:"···";color:var(--fg3)}
 .mrow .m .cdot{width:5px;height:5px;border-radius:50%;background:var(--book);flex:none}
@@ -344,7 +346,8 @@ LINES.filter(L=>L.type==='opening').forEach(P=>{const ci=P.name.indexOf(':');P.b
     name:P.base+': '+v.name,desc:v.desc||('A key line of the '+P.base+'. The notes on each move explain the plans.'),pgn:v.pgn};P.kids.push(C.id);LINES.push(C);});});
 {const cnt={};LINES.filter(L=>L.type==='opening'&&!L.parent).forEach(L=>cnt[L.base]=(cnt[L.base]||0)+1);
   LINES.filter(L=>L.type==='opening'&&!L.parent&&cnt[L.base]>1).forEach(P=>{P.head=P.name;});}
-LINES.forEach(L=>{if(!L.pgn)return;const pm=parsePgn(L.pgn);L.book=pm.map(x=>x.san);L.notes=pm.map(x=>x.c||'');
+LINES.forEach(L=>{if(!L.pgn)return;const pm=parsePgn(L.pgn);L.book=pm.map(x=>x.san);L.notes=pm.map(x=>x.c||'');L.named=L.book.length;
+  if(EXT_C[L.id]){const ex=EXT_C[L.id].split(' ');L.book=L.book.concat(ex);L.notes=L.notes.concat(ex.map(()=>''));}
   let s='';L.book.slice(0,8).forEach((m,i)=>{s+=(i%2?'':((i/2+1)+'.'))+m+' ';});L.preview=s.trim()+(L.book.length>8?' …':'');});
 const SHORT={'Mate in 1':'M1','Mate in 2':'M2','Opening trap':'Trap'};
 const countPiece=(fen,ch)=>fen.split(' ')[0].split('').filter(c=>c===ch).length;
@@ -360,10 +363,10 @@ const GOALTXT={mate:'Checkmate',promote:'Make a queen',capture:'Stop the pawn'};
 ENDGAME.forEach(p=>{const side=new Chess(p.fen).turn();LINES.push(Object.assign({},p,{type:'endgame',side,book:[],notes:[],eco:p.theme.split(' ')[0],family:p.theme,
   q0:countPiece(p.fen,side==='w'?'Q':'q'),preview:(side==='w'?'White':'Black')+' · '+GOALTXT[p.goal]+' in '+p.limit+' moves'}));});
 // Opening Explorer: every named line from the Lichess database, grouped by opening family.
-{const fams={};EXPLORER.forEach(([eco,name,mv],i)=>{const ci=name.indexOf(':');const fam=ci>0?name.slice(0,ci):name;const book=mv.split(' ');
+{const fams={};EXPLORER.forEach(([eco,name,mv],i)=>{const ci=name.indexOf(':');const fam=ci>0?name.slice(0,ci):name;const named=mv.split(' ');const book=EXT_X[i]?named.concat(EXT_X[i].split(' ')):named;
   let pv='';book.slice(0,8).forEach((m,k)=>{pv+=(k%2?'':((k/2+1)+'.'))+m+' ';});
-  const L={id:'x'+i,type:'explorer',side:book.length%2?'w':'b',eco,family:fam,base:fam,head:fam,varName:ci>0?name.slice(ci+1).trim():'Main line',name,book,notes:[],
-    desc:'A named line from the opening database (ECO '+eco+'). Use the White and Black buttons to choose your side.',preview:pv.trim()+(book.length>8?' …':'')};
+  const L={id:'x'+i,type:'explorer',named:named.length,side:named.length%2?'w':'b',eco,family:fam,base:fam,head:fam,varName:ci>0?name.slice(ci+1).trim():'Main line',name,book,notes:[],
+    desc:'A named line from the opening database (ECO '+eco+'). After the named moves, the line continues with Stockfish\'s best moves (shown in blue). Use the White and Black buttons to choose your side.',preview:pv.trim()+(book.length>8?' …':'')};
   (fams[fam]=fams[fam]||[]).push(L);LINES.push(L);});
  Object.values(fams).forEach(list=>{list.sort((a,b)=>a.book.length-b.book.length||a.name.localeCompare(b.name));const P=list.find(l=>l.name===l.family)||list[0];
    P.kids=list.filter(l=>l!==P).map(l=>{l.parent=P.id;return l.id;});});}
@@ -469,8 +472,8 @@ function renderMoves(){const el=$('moves');if(!S.line){el.innerHTML='';return;}
   const showUpTo=hideAhead?S.ply:S.moves.length;const total=hideAhead?S.line.book.length:S.moves.length;const off=plyInfo(0).off;
   let h='';for(let i=-off;i<total;i+=2){h+='<div class="mrow"><span class="n">'+plyInfo(Math.max(i,0)).num+'.</span>';for(let j=i;j<i+2;j++){
       if(j<0){h+='<span class="m" style="pointer-events:none;color:var(--fg3)">…</span>';continue;}if(j>=total){h+='<span></span>';continue;}
-      const hidden=j>=showUpTo;const san=hidden?'':S.moves[j]||S.line.book[j];const offb=!eg&&!hidden&&j>=d;const note=!offb&&!hidden&&S.line.notes[j];
-      h+='<span class="m'+(j===S.ply-1?' cur':'')+(offb?' off':'')+(hidden?' hid':'')+'" data-ply="'+(j+1)+'">'+(note?'<i class="cdot"></i>':'')+san+'</span>';}
+      const hidden=j>=showUpTo;const san=hidden?'':S.moves[j]||S.line.book[j];const offb=!eg&&!hidden&&j>=d;const note=!offb&&!hidden&&S.line.notes[j];const eng=!offb&&!hidden&&S.line.named!==undefined&&j>=S.line.named;
+      h+='<span class="m'+(j===S.ply-1?' cur':'')+(offb?' off':'')+(eng?' eng':'')+(hidden?' hid':'')+'"'+(eng?' title="Stockfish continuation"':'')+' data-ply="'+(j+1)+'">'+(note?'<i class="cdot"></i>':'')+san+'</span>';}
     h+='</div>';}
   if(eg&&!total)h='<div class="empty">Make your first move. The computer answers each move.</div>';
   el.innerHTML=h;const c=el.querySelector('.m.cur');if(c)c.scrollIntoView({block:'nearest'});
@@ -495,7 +498,8 @@ function renderCoach(){const el=$('bubble');if(!S.line)return;el.className='bubb
   if(S.ply===0){el.classList.add('book');el.innerHTML='<b>'+L.name+'.</b> '+L.desc+' Press <b>▶</b> or use the arrow keys to step through the moves.';return;}
   if(i>=d){el.classList.add('bad');el.innerHTML='<span class="mv">'+moveLabel(i,S.moves[i])+'</span> leaves the book line. Step back or press <b>Back to line</b> to return.';return;}
   el.classList.add(cur.in_checkmate()?'good':'book');
-  el.innerHTML='<span class="mv">'+moveLabel(i,S.moves[i])+'</span> '+(L.notes[i]||'Book move.')+(S.ply===L.book.length?' <b>End of the line.</b>':'');
+  const engMove=L.named!==undefined&&i>=L.named;
+  el.innerHTML='<span class="mv">'+moveLabel(i,S.moves[i])+'</span> '+(engMove?(i===L.named?'The named line ends here; from now on the moves are <b>Stockfish\'s best continuation</b> (shown in blue).':'Stockfish continuation.'):(L.notes[i]||'Book move.'))+(S.ply===L.book.length?' <b>End of the line.</b>':'');
 }
 function renderControls(){
   const lineMode=!!S.line;const pr=S.mode==='practice';
@@ -599,7 +603,7 @@ function egCheck(){const L=S.line,g=cur,me=L.side,opp=me==='w'?'b':'w';const use
   else{setTimeout(()=>snd('bad'),150);}
   render();return true;}
 function go(ply,anim){if(!S.line||S.mode==='practice')return;ply=Math.max(0,Math.min(S.moves.length,ply));const fwd=ply===S.ply+1;S.ply=ply;S.sel=null;
-  const {g,last}=chessAt(ply);S.badge=last&&ply<=divergence()?{sq:last.to,kind:g.in_checkmate()?'mate':'book'}:null;render(fwd&&anim!==false);if(fwd)moveSound(last,g);}
+  const {g,last}=chessAt(ply);S.badge=last&&ply<=divergence()&&(S.line.named===undefined||ply<=S.line.named)?{sq:last.to,kind:g.in_checkmate()?'mate':'book'}:null;render(fwd&&anim!==false);if(fwd)moveSound(last,g);}
 function maybeOpponent(){if(S.mode!=='practice'||S.pr.result)return;const L=S.line;
   if(S.ply>=L.book.length){finishPractice();return;}
   if(cur.turn()!==L.side){S.pr.busy=true;setTimeout(()=>{if(S.mode!=='practice'||S.line!==L)return;S.ply++;S.pr.busy=false;const {g,last}=chessAt(S.ply);S.badge=null;render(true);moveSound(last,g);
@@ -628,7 +632,7 @@ function tryMove(from,to,dragged){if(!S.line){return false;}const an=dragged?und
   // study / explore
   if(S.busy||cur.turn()!==S.line.side)return false;
   if(S.moves[S.ply]===san){go(S.ply+1,!dragged);studyReply();return true;}
-  S.moves=S.moves.slice(0,S.ply).concat(san);S.ply++;const {g:g2,last}=chessAt(S.ply);S.badge=S.ply<=divergence()?{sq:last.to,kind:'book'}:null;render(an);moveSound(last,g2);studyReply();return true;}
+  S.moves=S.moves.slice(0,S.ply).concat(san);S.ply++;const {g:g2,last}=chessAt(S.ply);S.badge=S.ply<=divergence()&&(S.line.named===undefined||S.ply<=S.line.named)?{sq:last.to,kind:'book'}:null;render(an);moveSound(last,g2);studyReply();return true;}
 
 // ---------- input (drag & click) ----------
 const board=$('board');let drag=null;

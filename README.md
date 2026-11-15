@@ -1,6 +1,6 @@
 # Opening Lab
 
-A chess trainer in a single web page: 38 annotated openings (115 lines), an Opening Explorer with all 3,865 named lines from the Lichess opening database, 30 traps, 41 puzzles, middlegame tactics and endgame drills for White and Black.
+A chess trainer in a single web page: 38 annotated openings (115 lines), an Opening Explorer with all 3,865 named lines from the Lichess opening database (each extended to at least 12 moves with Stockfish), 30 traps, 41 puzzles, middlegame tactics and endgame drills for White and Black.
 
 **Live site:** https://princepeniyel.github.io/opening-lab/
 
@@ -26,6 +26,13 @@ Get the latest version from the [Releases page](https://github.com/princepeniyel
 - **Middlegame drills**: forks, skewers and discovered attacks
 - **Endgame drills**: play basic mates, opposition, the square rule and the Lucena position against the computer
 - Random drill, search by name / ECO code / moves, progress saved in your browser
+
+## Engine continuations
+Short lines are extended past their named moves with Stockfish's best moves (shown in blue in the app). To regenerate `src/extend.js` (needs `stockfish` on your PATH; takes about 30 minutes):
+
+```bash
+node tools/extend.js src/vendor/chess.min.js
+```
 
 ## Editing
 Lines live in `src/data.js` (SAN moves with `{comments}`). The UI is `src/app.html`.
