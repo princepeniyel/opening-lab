@@ -21,7 +21,6 @@ Get the latest version from the [Releases page](https://github.com/princepeniyel
 - **Middlegame drills**: forks, skewers and discovered attacks
 - **Endgame drills**: play basic mates, opposition, the square rule and the Lucena position against the computer
 - Random drill, search by name / ECO code / moves, progress saved in your browser
-- Synthesised wooden move, capture, castle, check and game-end sounds
 
 ## Editing
 Lines live in `src/data.js` (SAN moves with `{comments}`). The UI is `src/app.html`.

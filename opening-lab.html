@@ -56,7 +56,7 @@ button:focus-visible,input:focus-visible,.item:focus-visible{outline:2px solid v
 .sq{position:relative}
 .sq.l{background:var(--sq-l)} .sq.d{background:var(--sq-d)}
 .sq.hl::before,.sq.sel::before{content:"";position:absolute;inset:0;background:var(--hl)}
-.sq.chk::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 52%,rgba(255,30,0,.95) 0%,rgba(255,45,0,.75) 18%,rgba(255,105,25,.35) 38%,rgba(255,130,40,0) 58%)}
+.sq.chk::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 52%,rgba(120,0,0,1) 0%,rgba(115,0,0,.95) 25%,rgba(100,0,0,.55) 45%,rgba(90,0,0,0) 66%)}
 .sq.mated::before{background-position:center;background-repeat:no-repeat;animation:matePulse 1.1s ease-in-out infinite alternate}
 @keyframes matePulse{from{background-size:86% 86%}to{background-size:118% 118%}}
 .pc.shake{animation:mateShake .6s cubic-bezier(.36,.07,.19,.97) .28s both}
@@ -233,7 +233,6 @@ button:focus-visible,input:focus-visible,.item:focus-visible{outline:2px solid v
     <div class="side-foot">
       <div class="prog"><span id="prog-txt">0 of 0 mastered</span><div class="bar"><i id="prog-bar"></i></div></div>
       <a class="dl" href="https://github.com/princepeniyel/opening-lab/releases/latest" target="_blank" rel="noopener">Download for Mac &amp; Windows</a>
-      <label class="toggle"><input type="checkbox" id="opt-sound" checked> Move sounds</label>
       <label class="toggle"><input type="checkbox" id="opt-arrow" checked> Show next-move arrow</label>
       <label class="toggle"><input type="checkbox" id="opt-legal" checked> Show legal moves</label>
     </div>
@@ -726,7 +725,7 @@ const byId=Object.fromEntries(LINES.map(L=>[L.id,L]));
 // ---------- storage ----------
 const store={get(k,d){try{const v=localStorage.getItem('ol.'+k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem('ol.'+k,JSON.stringify(v));}catch(e){}}};
 let mastered=store.get('mastered',{});
-const opts={sound:store.get('sound',true),arrow:store.get('arrow',true),legal:store.get('legal',true)};
+const opts={arrow:store.get('arrow',true),legal:store.get('legal',true)};
 
 // ---------- state ----------
 const S={cat:'opening',side:'all',q:'',line:null,moves:[],ply:0,mode:'study',orient:'w',sel:null,
@@ -737,41 +736,9 @@ function chessAt(ply){const g=new Chess(S.line&&S.line.fen?S.line.fen:undefined)
 function divergence(){if(!S.line)return 0;let i=0;while(i<S.moves.length&&S.moves[i]===S.line.book[i])i++;return i;}
 
 // ---------- sound ----------
-// Synthesised wooden-board sounds: a noise "click" for the contact plus a short pitched "body" for the wood.
-let actx=null,master=null,noiseBuf=null;
-function ac(){if(!actx){actx=new (window.AudioContext||window.webkitAudioContext)();
-    master=actx.createGain();master.gain.value=.9;const comp=actx.createDynamicsCompressor();comp.threshold.value=-10;master.connect(comp).connect(actx.destination);
-    noiseBuf=actx.createBuffer(1,actx.sampleRate*.25,actx.sampleRate);const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;}
-  if(actx.state==='suspended')actx.resume();return actx;}
-document.addEventListener('pointerdown',()=>{try{if(opts.sound)ac();}catch(e){}},{once:true});
-function knock(t,o){const a=actx;const dur=o.dur||.07;
-  // contact click
-  const n=a.createBufferSource();n.buffer=noiseBuf;const bp=a.createBiquadFilter();bp.type='bandpass';bp.frequency.value=o.click||1600;bp.Q.value=o.q||1.1;
-  const ng=a.createGain();ng.gain.setValueAtTime(0,t);ng.gain.linearRampToValueAtTime(o.clickGain||.7,t+.002);ng.gain.exponentialRampToValueAtTime(.001,t+dur*.55);
-  n.connect(bp).connect(ng).connect(master);n.start(t,Math.random()*.1);n.stop(t+dur);
-  // wooden body
-  [[o.body||300,1],[(o.body||300)*2.3,.35]].forEach(([f,lvl])=>{const os=a.createOscillator();os.type='sine';os.frequency.setValueAtTime(f,t);os.frequency.exponentialRampToValueAtTime(f*(o.drop||.6),t+dur);
-    const g=a.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime((o.bodyGain||.55)*lvl,t+.003);g.gain.exponentialRampToValueAtTime(.001,t+dur);
-    os.connect(g).connect(master);os.start(t);os.stop(t+dur+.01);});}
-function chime(t,notes,gap,len,vol){notes.forEach((f,i)=>{const s=t+i*gap;['sine','triangle'].forEach((type,k)=>{const os=actx.createOscillator();os.type=type;os.frequency.value=f*(k?2:1);
-  const g=actx.createGain();const v=(vol||.16)*(k?.25:1);g.gain.setValueAtTime(0,s);g.gain.linearRampToValueAtTime(v,s+.012);g.gain.exponentialRampToValueAtTime(.001,s+len);
-  os.connect(g).connect(master);os.start(s);os.stop(s+len+.02);});});}
-const SFX={
-  self:t=>knock(t,{click:1700,body:320,drop:.58}),
-  opp:t=>knock(t,{click:1350,body:270,drop:.6,clickGain:.6,bodyGain:.5}),
-  capture:t=>{knock(t,{click:2800,q:.8,body:460,drop:.5,dur:.09,clickGain:1,bodyGain:.6});knock(t+.022,{click:1500,body:240,dur:.07,clickGain:.5,bodyGain:.45});},
-  castle:t=>{knock(t,{click:1600,body:300});knock(t+.1,{click:1450,body:280,clickGain:.6});},
-  check:t=>{knock(t,{click:2300,body:560,drop:.75,dur:.09,clickGain:.9,bodyGain:.6});chime(t+.01,[988],0,.18,.07);},
-  promote:t=>{knock(t,{click:1700,body:320});chime(t+.04,[784,1047],.07,.25,.1);},
-  end:t=>chime(t+.05,[523.25,659.25,783.99],.12,.9,.14),
-  start:t=>chime(t,[659.25,987.77],.09,.5,.12),
-  bad:t=>{knock(t,{click:500,q:2.5,body:140,drop:.7,dur:.16,clickGain:.5,bodyGain:.7});knock(t+.09,{click:420,q:2.5,body:120,drop:.7,dur:.14,clickGain:.4,bodyGain:.6});}
-};
-function snd(kind){if(!opts.sound||!SFX[kind])return;try{ac();SFX[kind](actx.currentTime+.005);}catch(e){}}
-function moveSound(m,g){if(!m)return;
-  const self=S.line?m.color===S.line.side:true;
-  if(g.in_check())snd('check');else if(m.promotion)snd('promote');else if(m.flags.includes('k')||m.flags.includes('q'))snd('castle');else if(m.captured)snd('capture');else snd(self?'self':'opp');
-  if(g.in_checkmate()||g.in_draw())setTimeout(()=>snd('end'),180);}
+// Sound is turned off: these are kept as no-ops so game logic stays unchanged.
+function snd(){}
+function moveSound(){}
 
 // ---------- board ----------
 const FILES='abcdefgh';const ANIM=260;
@@ -1050,7 +1017,7 @@ $('list').addEventListener('click',e=>{const fh=e.target.closest('[data-exp]');i
   const it=e.target.closest('.item');if(it)openLine(it.dataset.id);});
 $('l-vars').addEventListener('click',e=>{const b=e.target.closest('[data-var]');if(b&&b.dataset.var!==S.line.id)openLine(b.dataset.var,S.mode==='practice'?'practice':undefined);});
 $('moves').addEventListener('click',e=>{const m=e.target.closest('.m');if(m&&S.mode==='study')go(+m.dataset.ply,false);});
-[['opt-sound','sound'],['opt-arrow','arrow'],['opt-legal','legal']].forEach(([id,k])=>{const el=$(id);el.checked=opts[k];el.onchange=()=>{opts[k]=el.checked;store.set(k,el.checked);render();};});
+[['opt-arrow','arrow'],['opt-legal','legal']].forEach(([id,k])=>{const el=$(id);el.checked=opts[k];el.onchange=()=>{opts[k]=el.checked;store.set(k,el.checked);render();};});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&drag){cancelDrag();return;}if(e.target.tagName==='INPUT')return;
   if(e.key==='ArrowLeft'){go(S.ply-1);e.preventDefault();}else if(e.key==='ArrowRight'){go(S.ply+1);e.preventDefault();}
   else if(e.key==='ArrowUp'||e.key==='Home'){go(0);e.preventDefault();}else if(e.key==='ArrowDown'||e.key==='End'){go(S.moves.length);e.preventDefault();}
