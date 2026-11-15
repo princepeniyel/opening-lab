@@ -1,6 +1,6 @@
 # Opening Lab
 
-A chess trainer in a single web page: 35 openings with 110 lines (main lines plus variations), 19 traps, 34 puzzles, middlegame tactics and endgame drills for White and Black.
+A chess trainer in a single web page: 38 annotated openings (115 lines), an Opening Explorer with all 3,865 named lines from the Lichess opening database, 19 traps, 34 puzzles, middlegame tactics and endgame drills for White and Black.
 
 **Live site:** https://princepeniyel.github.io/opening-lab/
 
@@ -10,6 +10,8 @@ Get the latest version from the [Releases page](https://github.com/princepeniyel
 - **Mac** (Apple Silicon and Intel, macOS 13+): download `Opening-Lab-mac.zip`, unzip it and drag **Opening Lab** to Applications.
   The app isn't notarized by Apple, so the first time: right-click the app → **Open** → **Open**
   (or System Settings → Privacy & Security → **Open Anyway**).
+- **Android** (7.0+): download `Opening-Lab-Android.apk` on your phone and open it.
+  Android asks you to allow installing apps from your browser or Files app the first time: tap **Settings** → allow → **Install**.
 - **Windows** (10/11, 64-bit): download `Opening-Lab-Windows.zip`, right-click → **Extract All**, then run **Opening Lab.exe**.
   If SmartScreen warns about an unknown publisher, click **More info** → **Run anyway**.
 
@@ -30,8 +32,17 @@ After editing, run:
 python3 build.py
 ```
 
+## Android app
+Built without Gradle using the Android SDK command-line tools (Java 17, platform 34, build-tools 34.0.0):
+
+```bash
+./android/build.sh
+```
+
+The signing key is created on first build outside the repo (`~/Library/Caches/OpeningLab-Android/openinglab-release.jks`). Keep it: app updates must be signed with the same key.
+
 ## Credits
-Pieces: Colin M.L. Burnett (cburnett), CC BY-SA 3.0. Move logic: chess.js.
+Pieces: Colin M.L. Burnett (cburnett), CC BY-SA 3.0. Move logic: chess.js. Opening Explorer data: [lichess-org/chess-openings](https://github.com/lichess-org/chess-openings), CC0.
 
 ## Mac app
 A native macOS app wraps the same trainer and works offline. To build it and install it into `/Applications`:

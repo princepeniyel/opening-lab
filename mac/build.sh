@@ -8,9 +8,8 @@ OUT=mac/build
 APP="$OUT/Opening Lab.app"
 rm -rf "$OUT" && mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 
-# Icon
-swiftc -O mac/icon.swift -o "$OUT/makeicon"
-"$OUT/makeicon" "$OUT/icon1024.png"
+# Icon (from brand/icon-1024.png)
+cp brand/icon-1024.png "$OUT/icon1024.png"
 ICONSET="$OUT/AppIcon.iconset"; mkdir -p "$ICONSET"
 for s in 16 32 128 256 512; do
   sips -z $s $s "$OUT/icon1024.png" --out "$ICONSET/icon_${s}x${s}.png" >/dev/null

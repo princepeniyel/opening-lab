@@ -3,7 +3,7 @@ import pathlib
 root = pathlib.Path(__file__).parent
 src = root / "src"
 page = (src / "app.html").read_text()
-page = page.replace("/*PIECES*/", (src / "pieces.js").read_text()).replace("/*DATA*/", (src / "data.js").read_text())
+page = page.replace("/*PIECES*/", (src / "pieces.js").read_text()).replace("/*DATA*/", (src / "data.js").read_text() + "\n" + (src / "explorer.js").read_text())
 (root / "opening-lab.html").write_text(page)
 head = '<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
 title_end = page.index("</style>") + len("</style>")

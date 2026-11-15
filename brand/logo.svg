@@ -1,0 +1,5 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="r3c3c3c"><rect x="50" y="0" width="50" height="100"/></clipPath></defs>
+<rect width="100" height="100" rx="22" fill="#f4f4f2"/><g transform="translate(6 5) scale(.88)"><g fill="#161616"><circle cx="50" cy="25" r="13"/><rect x="33" y="38.5" width="34" height="7" rx="3.5"/>
+<path d="M40.5 45.5 C40.5 60 34 69 26.5 78 L73.5 78 C66 69 59.5 60 59.5 45.5 Z"/><rect x="21" y="78" width="58" height="10" rx="5"/></g><g fill="#3c3c3c" clip-path="url(#r3c3c3c)"><circle cx="50" cy="25" r="13"/><rect x="33" y="38.5" width="34" height="7" rx="3.5"/>
+<path d="M40.5 45.5 C40.5 60 34 69 26.5 78 L73.5 78 C66 69 59.5 60 59.5 45.5 Z"/><rect x="21" y="78" width="58" height="10" rx="5"/></g>
+<ellipse cx="45" cy="20" rx="4.5" ry="3" fill="#5a5a5a" opacity=".9" transform="rotate(-35 45 20)"/></g></svg>

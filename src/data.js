@@ -369,3 +369,22 @@ benko:[
  {name:'3...dxe4',eco:'B11',pgn:`e4 c6 Nc3 d5 Nf3 dxe4 Nxe4 Bf5 Ng3 Bg6 h4 h6 h5 Bh7 d4 Nd7 {A Classical Caro-Kann structure.}`},
 ],
 };
+
+// ───────────────────────── MORE ANNOTATED OPENINGS ─────────────────────────
+LINES.push(
+{id:'four-knights',type:'opening',side:'w',eco:'C47',family:'1.e4',name:'Four Knights Game: Scotch',
+ desc:'Both sides bring out their knights first. The Scotch version opens the center with d4.',
+ pgn:`e4 e5 Nf3 Nc6 Nc3 Nf6 {The Four Knights: all four knights developed.} d4 {The Scotch Four Knights opens the center.} exd4 Nxd4 Bb4 {Pin and pressure on e4.} Nxc6 bxc6 Bd3 d5 exd5 cxd5 O-O O-O Bg5 c6 {A balanced, open position.}`},
+{id:'cow',type:'opening',side:'w',eco:'A00',family:'Flank',name:'The Cow',
+ desc:'A fun setup popularized by Anna Cramling: e3 and d3, knights to e2 and d2, then out to g3 and b3. Not objectively good, but hard to prepare against.',
+ pgn:`e3 {The Cow starts quietly.} e5 d3 d5 Ne2 {The first knight goes to e2...} Nf6 Ng3 {...and on to g3.} Bd6 Nd2 {The second knight...} O-O Nb3 {...lands on b3. The Cow is complete: two "horns" on g3 and b3.}`},
+{id:'alien',type:'opening',side:'w',eco:'B15',family:'1.e4',name:'Alien Gambit',
+ desc:'A wild knight sacrifice against the Caro-Kann, popularized by Witty Alien. Engines say it is unsound, but it is dangerous in fast games.',
+ pgn:`e4 c6 d4 d5 Nc3 dxe4 Nxe4 Nf6 Ng5 {The Alien knight hop, eyeing f7.} h6 Nxf7 {The sacrifice!} Kxf7 Bc4+ {Drag the king into the open.} e6 Nf3 {White has a pawn and a lasting attack for the knight.}`}
+);
+Object.assign(VARIATIONS,{
+'four-knights':[
+ {name:'Spanish Four Knights',eco:'C48',pgn:`e4 e5 Nf3 Nc6 Nc3 Nf6 Bb5 {The Spanish version: a calm, classical game.} Bb4 O-O O-O d3 d6 Bg5 Bxc3 bxc3 {White gets the bishop pair-like pressure; Black is solid.}`},
+ {name:'Halloween Gambit',eco:'C47',pgn:`e4 e5 Nf3 Nc6 Nc3 Nf6 Nxe5 {The Halloween Gambit: a knight for the center!} Nxe5 d4 {Chase the knight with pawns.} Ng6 e5 Ng8 Bc4 {White has a big center and fast development for the piece.}`},
+],
+});
