@@ -388,3 +388,46 @@ Object.assign(VARIATIONS,{
  {name:'Halloween Gambit',eco:'C47',pgn:`e4 e5 Nf3 Nc6 Nc3 Nf6 Nxe5 {The Halloween Gambit: a knight for the center!} Nxe5 d4 {Chase the knight with pawns.} Ng6 e5 Ng8 Bc4 {White has a big center and fast development for the piece.}`},
 ],
 });
+
+// ───────────────────────── MORE TRAPS ─────────────────────────
+// key = moves played before the winning idea (used to make the puzzle); nopuzzle = the idea needs the opponent to err first.
+const NEWTRAPS = [
+// ── White traps
+{id:'magnus-smith',type:'trap',side:'w',eco:'B57',family:'1.e4',name:'Magnus Smith Trap',key:16,
+ desc:'In the Sicilian, an early e5 push opens the f7 square for a bishop sacrifice.',
+ pgn:`e4 c5 Nf3 d6 d4 cxd4 Nxd4 Nf6 Nc3 Nc6 Bc4 g6 Nxc6 bxc6 e5 {Attack the f6 knight.} dxe5 {The natural capture is a blunder.} Bxf7+ {Deflect the king...} Kxf7 Qxd8 {...and win the queen.}`},
+{id:'halosar',type:'trap',side:'w',eco:'D00',family:'1.d4',name:'Halosar Trap',key:14,
+ desc:'In the Blackmar-Diemer Gambit, greedy queen moves let White mate on c7.',
+ pgn:`d4 d5 e4 dxe4 Nc3 Nf6 f3 exf3 Qxf3 Qxd4 {Black grabs a second pawn.} Be3 Qb4 O-O-O Bg4 {Attacking the queen...} Nb5 {...but White ignores it!} Bxf3 Nxc7# {Smothered on the queenside.}`},
+{id:'tarrasch-trap',type:'trap',side:'w',eco:'C80',family:'1.e4',name:'Tarrasch Trap',key:22,
+ desc:'In the Open Ruy Lopez, ...Qd7 lets White remove the e6 bishop, and then the d5 pawn can no longer hold e4.',
+ pgn:`e4 e5 Nf3 Nc6 Bb5 a6 Ba4 Nf6 O-O Nxe4 d4 b5 Bb3 d5 dxe5 Be6 c3 Be7 Re1 O-O Nd4 {Eyeing the e6 bishop.} Qd7 {A mistake.} Nxe6 {Remove the defender.} fxe6 Rxe4 {The rook takes the knight.} dxe4 {If Black recaptures...} Qxd7 {...the d-file opens and White wins the queen.}`},
+{id:'scotch-gambit-trap',type:'trap',side:'w',eco:'C44',family:'1.e4',name:'Scotch Gambit Trap',key:10,nopuzzle:true,
+ desc:'If Black meets Ng5 with ...Nh6, sacrifices on f7 expose the king and win the c5 bishop.',
+ pgn:`e4 e5 Nf3 Nc6 d4 exd4 Bc4 Bc5 Ng5 {Two pieces hit f7.} Nh6 {Defends, but...} Nxf7 Nxf7 Bxf7+ Kxf7 Qh5+ {A double attack: check and the c5 bishop.} g6 Qxc5 {White wins back material with Black's king exposed.}`},
+{id:'grob-trap',type:'trap',side:'w',eco:'A00',family:'Flank',name:'Grob Gambit Trap',key:8,nopuzzle:true,
+ desc:'In the Grob, the g2 bishop and the queen gang up on b7, d5 and the a8 rook.',
+ pgn:`g4 d5 Bg2 Bxg4 {Black takes the pawn.} c4 c6 cxd5 cxd5 Qb3 {Double attack on b7 and d5.} Nf6 Qxb7 {White wins a pawn and now threatens both the a8 rook and the d5 pawn.}`},
+{id:'greek-gift',type:'trap',side:'w',eco:'C11',family:'1.e4',name:'Greek Gift Sacrifice',key:12,nopuzzle:true,
+ desc:'The classic bishop sacrifice on h7 when Black castles into a kingside with no defending knight.',
+ pgn:`e4 e6 d4 d5 Nc3 Nf6 e5 Nfd7 Nf3 Be7 Bd3 O-O {Castling into the attack.} Bxh7+ {The Greek Gift!} Kxh7 Ng5+ {Knight check, the queen follows.} Kg8 Qh5 {Threatening Qh7#. Black can only delay mate with ...Re8 and ...Kf8, and White's attack crashes through.}`},
+{id:'french-adv-trap',type:'trap',side:'w',eco:'C02',family:'1.e4',name:'French Advance Queen Trap',key:16,
+ desc:'Grabbing d4 in the Advance French walks into a discovered attack on the queen.',
+ pgn:`e4 e6 d4 d5 e5 c5 c3 Nc6 Nf3 Qb6 Bd3 cxd4 cxd4 Nxd4 {Taking the pawn.} Nxd4 Qxd4 {Greed.} Bb5+ {Check, and the d1 queen now sees d4.} Ke7 Qxd4 {White wins the queen.}`},
+// ── Black traps
+{id:'stafford-skewer',type:'trap',side:'b',eco:'C42',family:'vs 1.e4',name:'Stafford Gambit: Queen Trap',key:13,
+ desc:'In the Stafford, taking the e4 knight opens the d-file onto White\'s queen.',
+ pgn:`e4 e5 Nf3 Nf6 Nxe5 Nc6 Nxc6 dxc6 e5 Ne4 d3 Bc5 {Ignore the attack on the knight!} dxe4 {White takes it...} Bxf2+ {...and Black strikes on f2.} Kxf2 Qxd1 {The d-file opened: Black wins the queen.}`},
+{id:'froms-lasker',type:'trap',side:'b',eco:'A02',family:'vs Flank',name:"From's Gambit: Lasker Trap",key:7,
+ desc:'Against the Bird Opening, a natural knight move allows a famous mate on g3.',
+ pgn:`f4 e5 {From's Gambit.} fxe5 d6 exd6 Bxd6 {Aiming at g3 and h2.} Nc3 {A natural move, but a blunder.} Qh4+ g3 Qxg3+ hxg3 Bxg3# {Checkmate!}`},
+{id:'rubinstein-4k',type:'trap',side:'b',eco:'C48',family:'vs 1.e4',name:'Four Knights: Rubinstein Trap',key:11,nopuzzle:true,
+ desc:'Against the Spanish Four Knights, ...Nd4 sets a trap if White grabs e5.',
+ pgn:`e4 e5 Nf3 Nc6 Nc3 Nf6 Bb5 Nd4 {The Rubinstein Countergambit.} Nxe5 {Taking the pawn.} Qe7 Nf3 {Retreating looks natural...} Nxb5 Nxb5 Qxe4+ {...but the queen forks the king and the b5 knight.}`},
+{id:'kgd-classical-trap',type:'trap',side:'b',eco:'C30',family:'vs 1.e4',name:"King's Gambit Declined Trap",key:5,
+ desc:'After 2...Bc5, taking on e5 lets the black queen fork the king and the h1 rook.',
+ pgn:`e4 e5 f4 Bc5 {Declining the gambit.} fxe5 {A blunder.} Qh4+ g3 Qxe4+ {Check and the h1 rook.} Qe2 Qxh1 {Black wins a whole rook.}`},
+];
+
+LINES.push(...NEWTRAPS);
+NEWTRAPS.filter(t=>!t.nopuzzle).forEach(t=>{TRAP_PUZZLES[t.id]=t.key;});

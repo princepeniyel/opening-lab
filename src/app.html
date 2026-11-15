@@ -404,14 +404,14 @@ function buildSquares(){const el=$('sqs');el.innerHTML='';for(let y=0;y<8;y++)fo
 function render(anim){
   const {g,last}=chessAt(S.ply);cur=g;
   document.querySelectorAll('.sq').forEach(d=>d.classList.remove('hl','sel','chk','dot','ring','wrong','pre','mated'));
-  if(S.pre){$('sq-'+S.pre.from).classList.add('pre');$('sq-'+S.pre.to).classList.add('pre');}
+  (S.pre||[]).forEach(p=>{$('sq-'+p.from).classList.add('pre');$('sq-'+p.to).classList.add('pre');});
   if(S.pr.wrong){[S.pr.wrong.from,S.pr.wrong.to].forEach(s=>$('sq-'+s).classList.add('wrong'));}
   else if(last){$('sq-'+last.from).classList.add('hl');$('sq-'+last.to).classList.add('hl');}
   if(g.in_check()){const b=g.board();for(let r=0;r<8;r++)for(let f=0;f<8;f++){const p=b[r][f];if(p&&p.type==='k'&&p.color===g.turn())$('sq-'+FILES[f]+(8-r)).classList.add('chk');}}
   if(S.sel){$('sq-'+S.sel).classList.add('sel');if(opts.legal)(preAllowed()?preMoves(S.sel):g.moves({square:S.sel,verbose:true})).forEach(m=>$('sq-'+m.to).classList.add(m.captured?'ring':'dot'));}
   // pieces
-  const pcs=$('pcs');pcs.innerHTML='';const b=g.board();const wrongG=S.pr.wrong?S.pr.wrong.g:null;const bb=wrongG?wrongG.board():b;
-  for(let r=0;r<8;r++)for(let f=0;f<8;f++){const p=bb[r][f];if(!p)continue;const sq=FILES[f]+(8-r);if(S.pre&&sq===S.pre.to)continue;const {x,y}=sqXY(S.pre&&sq===S.pre.from?S.pre.to:sq);
+  const pcs=$('pcs');pcs.innerHTML='';const b=g.board();const wrongG=S.pr.wrong?S.pr.wrong.g:null;const vg=!wrongG&&S.pre&&S.pre.length?preBoard():null;const bb=wrongG?wrongG.board():vg?vg.board():b;
+  for(let r=0;r<8;r++)for(let f=0;f<8;f++){const p=bb[r][f];if(!p)continue;const sq=FILES[f]+(8-r);const {x,y}=sqXY(sq);
     const e=document.createElement('div');e.className='pc';e.style.left=(x*12.5)+'%';e.style.top=(y*12.5)+'%';e.style.backgroundImage='url("'+PIECES[p.color+p.type]+'")';e.dataset.sq=sq;pcs.appendChild(e);}
   // checkmate: glow + shake on the mated king, # and crown badges, result card
   const mated=g.in_checkmate();const card=$('mate-card');
@@ -553,7 +553,7 @@ function openLine(id,mode){const L=byId[id];if(!L)return;S.line=L;S.moves=L.book
   buildSquares();setMode(mode||(L.type==='opening'||L.type==='trap'||L.type==='explorer'?'study':'practice'));setTab('line');renderList();}
 function setMeta(){const L=S.line;const TL={explorer:'Explorer',opening:'Opening',trap:'Trap',puzzle:'Puzzle',middlegame:'Middlegame',endgame:'Endgame'};const sn=L.side==='w'?'White':'Black';
   $('l-meta').innerHTML='<span class="chip '+(L.type==='trap'?'trap':'op')+'">'+TL[L.type]+'</span><span class="chip">'+(L.theme||L.eco)+'</span><span class="chip">'+(L.type==='opening'||L.type==='trap'||L.type==='explorer'?'Play as '+sn:sn+' to move')+'</span><span class="chip">'+(L.type==='endgame'?GOALTXT[L.goal]+' · '+L.limit+' moves':Math.ceil(L.book.length/2)+' moves')+'</span>'+(mastered[L.id]?'<span class="chip op">✓ Mastered</span>':'');}
-function setMode(m){S.pre=null;S.mode=m;$('m-study').classList.toggle('on',m==='study');$('m-practice').classList.toggle('on',m==='practice');
+function setMode(m){S.pre=[];S.mode=m;$('m-study').classList.toggle('on',m==='study');$('m-practice').classList.toggle('on',m==='practice');
   S.pr={mistakes:0,done:false,busy:false,hint:false,wrong:null,result:null,lastGood:false};S.badge=null;S.sel=null;
   S.busy=false;S.moves=S.line.book.slice();S.ply=0;render();snd('start');
   if(m==='practice'){if(S.line.type!=='endgame')maybeOpponent();}else studyReply();}
@@ -585,7 +585,7 @@ function bestMove(g){const sign=g.turn()==='w'?1:-1;let best=null,bs=-Infinity;c
 // Endgame drills: the computer answers, then the goal is checked.
 function egReply(){const L=S.line;S.pr.busy=true;render();
   setTimeout(()=>{if(S.line!==L||S.mode!=='practice'||S.pr.result){S.pr.busy=false;return;}const m=bestMove(new Chess(cur.fen()));S.pr.busy=false;if(!m){egCheck();render();return;}
-    S.moves=S.moves.slice(0,S.ply).concat(m.san);S.ply++;const {g,last}=chessAt(S.ply);render(true);moveSound(last,g);if(!egCheck())runPre();else S.pre=null;},420);}
+    S.moves=S.moves.slice(0,S.ply).concat(m.san);S.ply++;const {g,last}=chessAt(S.ply);render(true);moveSound(last,g);if(!egCheck())runPre();else S.pre=[];},420);}
 function egCheck(){const L=S.line,g=cur,me=L.side,opp=me==='w'?'b':'w';const used=Math.ceil(S.ply/2);
   const cnt=(c,t)=>g.board().flat().filter(p=>p&&p.color===c&&p.type===t).length;let res=null,why='';
   if(L.goal==='mate'){if(g.in_checkmate())res=g.turn()===opp?'win':'fail';else if(g.in_stalemate()){res='fail';why='Stalemate: the king has no legal move but is not in check. That is a draw.';}
@@ -635,12 +635,18 @@ const board=$('board');let drag=null;
 function sqFromPoint(cx,cy){const r=board.getBoundingClientRect();const x=Math.floor((cx-r.left)/r.width*8),y=Math.floor((cy-r.top)/r.height*8);if(x<0||y<0||x>7||y>7)return null;return xySq(x,y);}
 // Premoves: while the opponent is about to reply, queue one move of your own.
 function preAllowed(){return !!(S.line&&!cur.game_over()&&cur.turn()!==S.line.side&&(S.busy||S.pr.busy)&&!S.pr.result&&!S.pr.wrong);}
-function preMoves(sq){const t=cur.fen().split(' ');t[1]=S.line.side;t[3]='-';const g=new Chess();if(!g.load(t.join(' ')))return[];return g.moves({square:sq,verbose:true});}
-function setPre(from,to){if(!preMoves(from).some(m=>m.to===to))return false;S.pre={from,to};S.sel=null;render();return true;}
+// The queue is played out on a "what if" board where it is always your turn.
+function flipTo(g,side){const t=g.fen().split(' ');t[1]=side;t[3]='-';const n=new Chess();return n.load(t.join(' '))?n:null;}
+function preBoard(){let g=flipTo(cur,S.line.side)||new Chess(cur.fen());
+  for(const p of (S.pre||[])){if(!g.move({from:p.from,to:p.to,promotion:'q'}))break;const n=flipTo(g,S.line.side);if(!n)break;g=n;}return g;}
+function preMoves(sq){return preBoard().moves({square:sq,verbose:true});}
+function setPre(from,to){if(!preMoves(from).some(m=>m.to===to))return false;S.pre=(S.pre||[]).concat({from,to});S.sel=null;render();return true;}
 function attemptMove(from,to,dragged){return preAllowed()?setPre(from,to):tryMove(from,to,dragged);}
-function runPre(){if(!S.pre)return;const p=S.pre;setTimeout(()=>{if(S.pre!==p)return;S.pre=null;if(!S.line||cur.turn()!==S.line.side||!tryMove(p.from,p.to,false))render();},110);}
-function clearPre(){if(S.pre){S.pre=null;render();}}
-function canPick(sq){if(preAllowed()){const p=cur.get(sq);return !!(p&&p.color===S.line.side);}
+// After each opponent reply, play the next queued premove. If one is illegal, drop the whole queue.
+function runPre(){const q=S.pre;if(!q||!q.length)return;setTimeout(()=>{if(S.pre!==q||!q.length||!S.line||cur.turn()!==S.line.side)return;
+  const p=q.shift();const ok=tryMove(p.from,p.to,false);if(!ok||S.pr.wrong){S.pre=[];render();}},110);}
+function clearPre(){if(S.pre&&S.pre.length){S.pre=[];render();}}
+function canPick(sq){if(preAllowed()){const p=preBoard().get(sq);return !!(p&&p.color===S.line.side);}
   if(!S.line||S.busy||cur.turn()!==S.line.side)return false;if(S.mode==='practice'&&(S.pr.busy||S.pr.result))return false;const p=cur.get(sq);return p&&p.color===cur.turn();}
 function snapBack(d){const {x,y}=sqXY(d.sq);const e=d.el;S.sel=null;e.classList.remove('drag');e.style.zIndex=5;
   e.style.transition='left .22s cubic-bezier(.25,.75,.3,1), top .22s cubic-bezier(.25,.75,.3,1)';e.style.left=(x*12.5)+'%';e.style.top=(y*12.5)+'%';
@@ -661,7 +667,7 @@ board.addEventListener('pointerup',e=>{if(!drag||e.button!==0)return;const d=dra
 board.addEventListener('pointercancel',()=>{cancelDrag();});
 
 // ---------- buttons ----------
-const nav=p=>{S.pre=null;go(p);};
+const nav=p=>{S.pre=[];go(p);};
 $('b-first').onclick=()=>nav(0);$('b-prev').onclick=()=>nav(S.ply-1);$('b-next').onclick=()=>nav(S.ply+1);$('b-last').onclick=()=>nav(S.moves.length);
 $('b-flip').onclick=()=>{S.orient=S.orient==='w'?'b':'w';buildSquares();render();};
 $('m-study').onclick=()=>S.line&&setMode('study');$('m-practice').onclick=()=>S.line&&setMode('practice');
@@ -686,7 +692,7 @@ $('l-side').addEventListener('click',e=>{const b=e.target.closest('[data-ps]');i
 $('l-vars').addEventListener('click',e=>{const b=e.target.closest('[data-var]');if(b&&b.dataset.var!==S.line.id)openLine(b.dataset.var,S.mode==='practice'?'practice':undefined);});
 $('moves').addEventListener('click',e=>{const m=e.target.closest('.m');if(m&&S.mode==='study')go(+m.dataset.ply,false);});
 [['opt-arrow','arrow'],['opt-legal','legal']].forEach(([id,k])=>{const el=$(id);el.checked=opts[k];el.onchange=()=>{opts[k]=el.checked;store.set(k,el.checked);render();};});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&drag){cancelDrag();return;}if(e.key==='Escape'&&S.pre){clearPre();return;}if(e.target.tagName==='INPUT')return;
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&drag){cancelDrag();return;}if(e.key==='Escape'&&S.pre&&S.pre.length){clearPre();return;}if(e.target.tagName==='INPUT')return;
   if(e.key==='ArrowLeft'){nav(S.ply-1);e.preventDefault();}else if(e.key==='ArrowRight'){nav(S.ply+1);e.preventDefault();}
   else if(e.key==='ArrowUp'||e.key==='Home'){nav(0);e.preventDefault();}else if(e.key==='ArrowDown'||e.key==='End'){nav(S.moves.length);e.preventDefault();}
   else if(e.key==='f'){$('b-flip').click();}});

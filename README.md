@@ -1,6 +1,6 @@
 # Opening Lab
 
-A chess trainer in a single web page: 38 annotated openings (115 lines), an Opening Explorer with all 3,865 named lines from the Lichess opening database, 19 traps, 34 puzzles, middlegame tactics and endgame drills for White and Black.
+A chess trainer in a single web page: 38 annotated openings (115 lines), an Opening Explorer with all 3,865 named lines from the Lichess opening database, 30 traps, 41 puzzles, middlegame tactics and endgame drills for White and Black.
 
 **Live site:** https://princepeniyel.github.io/opening-lab/
 

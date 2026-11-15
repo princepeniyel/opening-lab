@@ -1,7 +1,7 @@
 {
   "name": "opening-lab",
   "productName": "Opening Lab",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Chess opening, trap, puzzle and endgame trainer",
   "author": "princepeniyel",
   "private": true,

@@ -13,7 +13,7 @@ cp mac/index.html "$OUT/assets/index.html"
 
 "$BT/aapt2" compile --dir android/res -o "$OUT/res.zip"
 "$BT/aapt2" link -o "$OUT/base.apk" -I "$JAR" --manifest android/AndroidManifest.xml "$OUT/res.zip" \
-  -A "$OUT/assets" --java "$OUT/gen" --min-sdk-version 24 --target-sdk-version 34 --version-code 1 --version-name 1.0
+  -A "$OUT/assets" --java "$OUT/gen" --min-sdk-version 24 --target-sdk-version 34 --version-code 2 --version-name 1.2
 "$JAVA_HOME/bin/javac" -nowarn --release 8 -classpath "$JAR" -d "$OUT/classes" \
   $(find android/src "$OUT/gen" -name '*.java') 2>&1 | grep -v "^warning\|^Note\|^1 warning" || true
 "$BT/d8" --release --min-api 24 --lib "$JAR" --output "$OUT" $(find "$OUT/classes" -name '*.class')
