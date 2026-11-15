@@ -374,6 +374,7 @@ function render(anim){
 }
 function drawArrows(){const svg=$('arrows');svg.innerHTML='';if(!S.line||S.pr.wrong)return;
   let next=null;
+  if(cur.turn()!==S.line.side)return; // never hint the opponent's move
   if(S.mode==='study'&&opts.arrow){const d=divergence();if(S.ply<S.line.book.length&&S.ply<=d)next=S.line.book[S.ply];}
   if(S.mode==='practice'&&S.pr.hint&&S.ply<S.line.book.length)next=S.line.book[S.ply];
   if(!next)return;const g=new Chess(cur.fen());const m=g.move(next);if(!m)return;
